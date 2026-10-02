@@ -1,0 +1,27 @@
+{
+  "fps": 30,
+  "bpm": 120,
+  "durationInFrames": 450,
+  "framesPerBeat": 15,
+  "scenes": {
+    "ignition": {"from": 0, "to": 60},
+    "type": {"from": 60, "to": 120},
+    "morph": {"from": 120, "to": 195},
+    "swarm": {"from": 195, "to": 270},
+    "dive": {"from": 270, "to": 360},
+    "drop": {"from": 360, "to": 420},
+    "resolve": {"from": 420, "to": 450}
+  },
+  "cues": {
+    "typeLetterBeats": [4, 4.5, 5, 5.5, 6, 6.5],
+    "typeSplitBeat": 7,
+    "typeWipeBeat": 7.5,
+    "morphBeats": [8, 9, 10, 11, 12],
+    "shatterBeat": 13,
+    "regroupBeat": 16,
+    "divePassBeats": [19, 20, 21, 22],
+    "dropBeat": 24,
+    "collapseBeat": 27,
+    "finalBeat": 28
+  }
+}

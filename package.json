@@ -1,0 +1,22 @@
+{
+  "name": "signal-noise-showreel",
+  "version": "1.0.0",
+  "private": true,
+  "description": "SIGNAL / NOISE: a 15-second motion graphics showreel built with Remotion",
+  "scripts": {
+    "audio": "node scripts/generate-audio.mjs",
+    "studio": "npm run audio && remotion studio",
+    "render": "npm run audio && remotion render Showreel out/showreel.mp4",
+    "still": "remotion still Showreel out/still.png"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.532",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "remotion": "4.0.532"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.0",
+    "typescript": "5.8.3"
+  }
+}
