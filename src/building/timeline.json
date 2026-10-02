@@ -1,0 +1,36 @@
+{
+  "fps": 30,
+  "durationInFrames": 450,
+  "bpm": 120,
+  "phases": [
+    {"key": "blueprint", "label": "BLUEPRINT", "from": 0.0, "to": 2.0},
+    {"key": "foundation", "label": "FOUNDATION", "from": 2.0, "to": 4.0},
+    {"key": "floors", "label": "STRUCTURE", "from": 4.0, "to": 7.0},
+    {"key": "windows", "label": "ENVELOPE", "from": 7.0, "to": 8.75},
+    {"key": "balconies", "label": "BALCONIES", "from": 8.75, "to": 10.0},
+    {"key": "materials", "label": "MATERIAL & LIGHT", "from": 10.0, "to": 12.0},
+    {"key": "orbit", "label": "", "from": 12.0, "to": 15.0}
+  ],
+  "cues": {
+    "gridIn": 0.1,
+    "wireStart": 0.35,
+    "wireEnd": 2.1,
+    "plinth": 2.0,
+    "podium": 2.55,
+    "floorStart": 4.0,
+    "floorStep": 0.25,
+    "wallStart": 7.0,
+    "glassStart": 7.2,
+    "glassFloorStep": 0.11,
+    "balconyStart": 8.75,
+    "balconyFloorStep": 0.09,
+    "materialStart": 10.0,
+    "duskStart": 9.6,
+    "duskEnd": 11.4,
+    "lightsStart": 10.35,
+    "lightsFloorStep": 0.1,
+    "ledStart": 11.0,
+    "crownLight": 11.6,
+    "title": 13.0
+  }
+}
