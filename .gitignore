@@ -1,4 +1,7 @@
 node_modules
 out/stills
+out/vs
 public/audio/*.wav
+public/vosu/soundtrack.wav
+voices/
 .DS_Store

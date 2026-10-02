@@ -1,0 +1,54 @@
+{
+  "fps": 30,
+  "bpm": 120,
+  "durationInFrames": 450,
+  "scenes": {
+    "logo": {"from": 0, "to": 62},
+    "studio": {"from": 40, "to": 152},
+    "nodes": {"from": 140, "to": 242},
+    "tools": {"from": 228, "to": 318},
+    "market": {"from": 308, "to": 392},
+    "end": {"from": 384, "to": 450}
+  },
+  "vo": {
+    "intro": 0.42,
+    "studio": 2.08,
+    "nodes": 5.18,
+    "tools": 8.18,
+    "market": 10.55,
+    "outro": 13.1
+  },
+  "words": {
+    "brand": ["intro", 1],
+    "video": ["studio", 4],
+    "image": ["studio", 5],
+    "audio": ["studio", 6],
+    "threeD": ["studio", 8],
+    "cinematic": ["nodes", 3],
+    "sequences": ["nodes", 4],
+    "click": ["tools", 3],
+    "creator": ["market", 4],
+    "outroBrand": ["outro", 0],
+    "what": ["outro", 1],
+    "are": ["outro", 2],
+    "you": ["outro", 3],
+    "creating": ["outro", 4],
+    "today": ["outro", 5]
+  },
+  "cues": {
+    "whip": 140,
+    "swipe": 228,
+    "letters": [5, 11, 17, 23],
+    "glint": 28,
+    "zoomThrough": 44,
+    "typeOn": 72,
+    "nodePops": [149, 159, 165, 171],
+    "toolsCascade": 237,
+    "toolsPush": 266,
+    "marketBuild": 316,
+    "buttonPress": 360,
+    "endBloom": 390,
+    "finalChord": 420,
+    "finalGlint": 432
+  }
+}

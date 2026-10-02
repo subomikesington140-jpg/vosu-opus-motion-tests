@@ -60,3 +60,41 @@ src/scenes/*.tsx       the seven shots
 src/components/        HUD and film grain overlays
 scripts/generate-audio.mjs  soundtrack synthesizer
 ```
+
+---
+
+# VOSU: 15-second product film
+
+**Rendered output:** [`out/vosu-promo.mp4`](out/vosu-promo.mp4) (composition `VosuPromo`)
+
+A commercial-style introduction to VOSU, built from the supplied logo and screenshots.
+The UI is never redrawn. `scripts/vosu/extract_assets.py` cuts the real screenshots into
+51 separate components (headline halves, prompt box, each category pill, every node,
+each tool card, the marketplace copy, button and trust items, and the floating media
+cards, which are de-rotated from their corner points). Each component then animates
+independently and lands back on its original layout.
+
+| Time | Shot | Animation | Voiceover |
+|------|------|-----------|-----------|
+| 0–2s | Logo | V·O·S·U land one per beat, glint and specular sweep, then the camera flies through the star cut into the "O" | "Meet VOSU." |
+| 2–5s | Home / studio | Headline rises, the prompt placeholder types on, each category pill lights on its spoken word as the matching media card floats in | "Your AI studio for video, image, audio, and 3D." |
+| 5–8s | Node editor | Whip pan in, nodes pop in sequence, real wires revealed left to right, signal pulses, camera tracks to the video generator | "Turn ideas into cinematic sequences." |
+| 8–10.5s | Popular tools | Cards cascade with a 3D flip, push onto Background Remover, the button is clicked on "click", kinetic "One click away." | "Pro tools, one click away." |
+| 10.5–13s | Creator Marketplace | Hero builds piece by piece, cards orbit into place, CTA pressed on the beat, camera dives into the white card | "And get paid on the Creator Marketplace." |
+| 13–15s | End card | The mark on light, then the product's own line set word by word with the voice, and vosu.ai | "VOSU. What are you creating today?" |
+
+**Sound:** the voiceover is neural TTS ([Piper](https://github.com/rhasspy/piper), voice
+`en-us-ryan-high`), synthesized locally. The brand is spelled phonetically ("Vohsoo",
+/voʊsuː/) for the voice and stays VOSU on screen. Phoneme alignments give per-word
+timestamps (`src/vosu/vo.json`), which drive the pill highlights, the click and the
+end-card words. The music (F major, 120 BPM) and the UI sound design are synthesized in
+`scripts/vosu/generate-audio.mjs`. Music ducks under the voice, which sits about +9.6 dB
+over the bed while speaking, and the master is normalized to −14 LUFS.
+
+```bash
+npm run vosu:render      # mix audio + render out/vosu-promo.mp4 (uses committed crops and VO)
+
+# regenerate inputs (Python: pip install pillow piper-tts onnx)
+npm run vosu:assets      # re-cut UI components from assets/vosu-source/
+PIPER_VOICE=/path/en-us-ryan-high.onnx npm run vosu:vo   # re-record the voiceover
+```

@@ -7,7 +7,11 @@
     "audio": "node scripts/generate-audio.mjs",
     "studio": "npm run audio && remotion studio",
     "render": "npm run audio && remotion render Showreel out/showreel.mp4",
-    "still": "remotion still Showreel out/still.png"
+    "still": "remotion still Showreel out/still.png",
+    "vosu:assets": "python3 scripts/vosu/extract_assets.py",
+    "vosu:vo": "python3 scripts/vosu/generate_vo.py --voice ${PIPER_VOICE:-voices/en-us-ryan-high.onnx}",
+    "vosu:audio": "node scripts/vosu/generate-audio.mjs",
+    "vosu:render": "npm run vosu:audio && remotion render VosuPromo out/vosu-promo.mp4"
   },
   "dependencies": {
     "@remotion/cli": "4.0.532",

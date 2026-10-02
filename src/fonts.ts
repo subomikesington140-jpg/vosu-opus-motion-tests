@@ -4,6 +4,9 @@ const faces: [string, string][] = [
   ['Inter Tight Black', 'fonts/InterTight-Black.ttf'],
   ['Inter Tight Light', 'fonts/InterTight-Light.ttf'],
   ['JetBrains Mono', 'fonts/JetBrainsMono-Medium.ttf'],
+  ['Plus Jakarta Sans ExtraBold', 'fonts/PlusJakartaSans-ExtraBold.ttf'],
+  ['Plus Jakarta Sans SemiBold', 'fonts/PlusJakartaSans-SemiBold.ttf'],
+  ['Instrument Serif Italic', 'fonts/InstrumentSerif-Italic.ttf'],
 ];
 
 let loaded = false;
