@@ -139,3 +139,21 @@ npm run arch:render   # soundtrack + out/arch-film.mp4
 
 Rendering needs WebGL. Without a GPU, use SwiftShader through ANGLE (`--gl=swangle`,
 already set in `remotion.config.ts`).
+
+---
+
+# How an AI agent works: 20-second explainer
+
+**Rendered output:** [`out/agent-explainer.mp4`](out/agent-explainer.mp4) (composition `AgentExplainer`)
+
+USER PROMPT → AI AGENT → PLAN → TOOLS → RESULT, told through one example ("Plan a weekend
+in Lisbon under $800") on a single continuous canvas. The camera travels along the
+connecting lines, and the final pull-back turns the whole journey into one diagram.
+The voiceover is Kokoro TTS (`af_heart`), with per-word timings in `src/agent/vo.json`. Tags,
+plan steps, tool calls and the result card are each placed on the word that names them.
+The music bed ducks under the voice, and every transition has a sound effect.
+
+```bash
+npm run agent:vo       # narration (needs the Kokoro model in voices/kokoro)
+npm run agent:render   # soundtrack + out/agent-explainer.mp4
+```

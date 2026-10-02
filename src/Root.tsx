@@ -5,6 +5,8 @@ import {VosuPromo} from './vosu/VosuPromo';
 import vosuTimeline from './vosu/timeline.json';
 import {ArchFilm} from './building/ArchFilm';
 import archTimeline from './building/timeline.json';
+import {AgentExplainer} from './agent/AgentExplainer';
+import agentTimeline from './agent/timeline.json';
 import {T} from './lib/timing';
 import {H, W} from './theme';
 
@@ -13,5 +15,6 @@ export const RemotionRoot: React.FC = () => (
     <Composition id="Showreel" component={Showreel} durationInFrames={T.durationInFrames} fps={T.fps} width={W} height={H} />
     <Composition id="VosuPromo" component={VosuPromo} durationInFrames={vosuTimeline.durationInFrames} fps={vosuTimeline.fps} width={W} height={H} />
     <Composition id="ArchFilm" component={ArchFilm} durationInFrames={archTimeline.durationInFrames} fps={archTimeline.fps} width={W} height={H} />
+    <Composition id="AgentExplainer" component={AgentExplainer} durationInFrames={agentTimeline.durationInFrames} fps={agentTimeline.fps} width={W} height={H} />
   </>
 );

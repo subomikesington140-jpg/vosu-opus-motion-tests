@@ -1,0 +1,8 @@
+{
+  "goal": ["You give an AI agent a goal: | plan my weekend in Lisbon.", 1.0],
+  "need": ["First, it works out what you actually need,", 1.0],
+  "plan": ["then it makes a plan: small, clear steps.", 1.0],
+  "tools": ["For each step, it uses a tool: | searching flights, comparing hotels, checking the weather.", 1.04],
+  "together": ["Then it puts everything together,", 1.0],
+  "result": ["into one clear result.", 0.97]
+}

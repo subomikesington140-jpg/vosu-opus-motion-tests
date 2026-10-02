@@ -6,3 +6,4 @@ public/vosu/soundtrack.wav
 voices/
 .DS_Store
 public/building/*.wav
+public/agent/*.wav

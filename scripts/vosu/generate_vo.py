@@ -7,6 +7,7 @@ word timings are exact and the picture can sync to individual words.
 
 Usage:
   python3 scripts/vosu/generate_vo.py --model-dir voices/kokoro [--voice am_michael]
+  # another script: --lines lines.json ({"key": ["text", speed]}) --out public/x/vo --meta src/x/vo.json
 Model files (kokoro-v1.0.onnx, voices-v1.0.bin):
   github.com/thewh1teagle/kokoro-onnx/releases/tag/model-files-v1.0
 Python deps: pip install kokoro-onnx onnx soundfile
@@ -121,14 +122,20 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--model-dir", required=True, type=Path)
     ap.add_argument("--voice", default="am_michael")
+    ap.add_argument("--lines", type=Path, help="JSON {key: [text, speed]}; defaults to the VOSU promo lines")
+    ap.add_argument("--out", type=Path, default=OUT)
+    ap.add_argument("--meta", type=Path, default=ROOT / "src/vosu/vo.json")
     args = ap.parse_args()
+    lines = {k: tuple(v) for k, v in json.loads(args.lines.read_text()).items()} if args.lines else LINES
+    out_dir = args.out if args.out.is_absolute() else ROOT / args.out
+    meta_path = args.meta if args.meta.is_absolute() else ROOT / args.meta
 
     sess = load_session(args.model_dir)
     tok = Tokenizer()
     style_bank = np.load(args.model_dir / "voices-v1.0.bin")[args.voice]
-    OUT.mkdir(parents=True, exist_ok=True)
+    out_dir.mkdir(parents=True, exist_ok=True)
     meta = {}
-    for key, (text, speed) in LINES.items():
+    for key, (text, speed) in lines.items():
         pieces, words, t_out = [], [], 0
         phrases = text.split(" | ")
         for pi, phrase in enumerate(phrases):
@@ -168,7 +175,7 @@ def main():
                 pieces.append(gap)
                 t_out += len(gap)
         pcm = np.concatenate(pieces)
-        raw = OUT / f"{key}.raw.wav"
+        raw = out_dir / f"{key}.raw.wav"
         with wave.open(str(raw), "wb") as w:
             w.setnchannels(1)
             w.setsampwidth(2)
@@ -181,7 +188,7 @@ def main():
              "highpass=f=70,equalizer=f=3000:t=q:w=1.2:g=1.5,equalizer=f=9000:t=q:w=1:g=1,"
              "acompressor=threshold=-22dB:ratio=2.2:attack=8:release=120:makeup=1.5,"
              "loudnorm=I=-16:TP=-1.5:LRA=7,aresample=44100:resampler=soxr",
-             "-ac", "1", "-sample_fmt", "s16", str(OUT / f"{key}.wav")],
+             "-ac", "1", "-sample_fmt", "s16", str(out_dir / f"{key}.wav")],
             check=True,
         )
         raw.unlink()
@@ -195,7 +202,7 @@ def main():
             wd["end"] = round(wd["end"], 3)
         meta[key] = {"text": text.replace(" | ", " "), "voice": args.voice, "duration": round(len(pcm) / SR, 3), "words": words}
         print(f"{key:7s} {len(pcm) / SR:5.2f}s  " + " ".join(f"{w['word']}({w['ph']})@{w['start']:.2f}" for w in words))
-    (ROOT / "src/vosu/vo.json").write_text(json.dumps(meta, indent=1, ensure_ascii=False))
+    meta_path.write_text(json.dumps(meta, indent=1, ensure_ascii=False))
 
 
 if __name__ == "__main__":

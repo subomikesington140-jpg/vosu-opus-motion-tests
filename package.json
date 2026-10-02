@@ -14,7 +14,10 @@
     "vosu:render": "npm run vosu:audio && remotion render VosuPromo out/vosu-promo.mp4",
     "arch:audio": "node scripts/building/generate-audio.mjs",
     "arch:render": "npm run arch:audio && remotion render ArchFilm out/arch-film.mp4 --gl=swangle",
-    "arch:still": "remotion still ArchFilm out/stills/arch.png --gl=swangle"
+    "arch:still": "remotion still ArchFilm out/stills/arch.png --gl=swangle",
+    "agent:vo": "python3 scripts/vosu/generate_vo.py --model-dir ${KOKORO_DIR:-voices/kokoro} --voice af_heart --lines src/agent/lines.json --out public/agent/vo --meta src/agent/vo.json",
+    "agent:audio": "node scripts/agent/generate-audio.mjs",
+    "agent:render": "npm run agent:audio && remotion render AgentExplainer out/agent-explainer.mp4"
   },
   "dependencies": {
     "@react-three/fiber": "9.8.1",
