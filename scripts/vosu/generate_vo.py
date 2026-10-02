@@ -18,53 +18,81 @@ from piper import PiperVoice, SynthesisConfig
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "public/vosu/vo"
-# "Vohsoo" spells the brand phonetically (/voʊsuː/, VOH-soo); on screen it stays VOSU.
+# The brand is passed as raw phonemes so it is said crisply as "VO-su" (/ˈvoʊsu/),
+# with a short unstressed second syllable rather than a drawn-out "soo".
+BRAND = "[[ vˈoʊsu ]]"
+# key: (spoken text, on-screen words used for timing labels)
 LINES = {
-    "intro": "Meet Vohsoo.",
-    "studio": "Your AI studio for video, image, audio, and 3D.",
-    "nodes": "Turn ideas into cinematic sequences.",
-    "tools": "Pro tools, one click away.",
-    "market": "And get paid on the Creator Marketplace.",
-    "outro": "Vohsoo. What are you creating today?",
+    "intro": (f"Meet {BRAND}.", "Meet VOSU"),
+    "studio": ("Your AI studio for video, images, audio, and 3D.", "Your AI studio for video images audio and 3D"),
+    "nodes": ("Turn ideas into cinematic sequences.", "Turn ideas into cinematic sequences"),
+    "tools": ("Pro tools, one click away.", "Pro tools one click away"),
+    "market": ("And get paid on the Creator Marketplace.", "And get paid on the Creator Marketplace"),
+    # " | " splits a line into separately spoken phrases with a short beat between them
+    "outro": (f"{BRAND} | What are you creating today?", "VOSU What are you creating today"),
 }
+# calm, even read: slower pace on the list line, steadier rhythm everywhere
+PACE = {"intro": 1.0, "studio": 1.25, "nodes": 1.1, "tools": 1.1, "market": 1.08, "outro": 1.08}
+# breaths inserted after punctuation (seconds)
+PAUSE = {",": 0.15, ".": 0.16}
+PHRASE_GAP = 0.26
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--voice", required=True)
-    ap.add_argument("--length-scale", type=float, default=1.06)
+    ap.add_argument("--length-scale", type=float, default=1.0)
     args = ap.parse_args()
 
     voice = PiperVoice.load(args.voice, config_path=args.voice + ".json", include_alignments=True)
-    # the list line and the brand intro get a slightly more measured read
-    pace = {"intro": 1.12, "studio": 1.14}
     OUT.mkdir(parents=True, exist_ok=True)
     meta = {}
-    for key, text in LINES.items():
-        audio, words, sr, t0 = [], [], None, 0
-        cfg = SynthesisConfig(length_scale=pace.get(key, args.length_scale), noise_scale=0.6, noise_w_scale=0.7)
-        for chunk in voice.synthesize(text, cfg, include_alignments=True):
+    for key, (text, display) in LINES.items():
+        cfg = SynthesisConfig(length_scale=PACE[key] * args.length_scale, noise_scale=0.5, noise_w_scale=0.55)
+        pieces, words, sr = [], [], None
+        out_pos = 0  # samples written so far, including inserted pauses
+        phrases = text.split(" | ")
+        chunks = []
+        for pi, phrase in enumerate(phrases):
+            chunks += [(c, pi < len(phrases) - 1) for c in voice.synthesize(phrase, cfg, include_alignments=True)]
+        for chunk, gap_after in chunks:
             sr = chunk.sample_rate
-            pos = t0
+            pcm = chunk.audio_int16_array
+            pos = 0
             cur = None
+            last_cut = 0
             for al in chunk.phoneme_alignments:
                 n = int(al.num_samples)
-                if al.phoneme in (" ", "^", "$") or al.phoneme in ".,?!":
-                    if cur:
-                        cur["end"] = pos / sr
-                        words.append(cur)
-                        cur = None
-                elif cur is None:
-                    cur = {"ph": al.phoneme, "start": pos / sr}
-                else:
-                    cur["ph"] += al.phoneme
+                ph = al.phoneme
+                boundary = ph in (" ", "^", "$") or ph in ".,?!"
+                if boundary and cur:
+                    cur["end"] = (out_pos + pos - last_cut) / sr
+                    words.append(cur)
+                    cur = None
+                elif not boundary:
+                    if cur is None:
+                        cur = {"ph": ph, "start": (out_pos + pos - last_cut) / sr}
+                    else:
+                        cur["ph"] += ph
                 pos += n
+                if ph in PAUSE and pos < len(pcm) - int(0.05 * sr):
+                    # cut here and insert a short breath of silence
+                    pieces.append(pcm[last_cut:pos])
+                    out_pos += pos - last_cut
+                    gap = np.zeros(int(PAUSE[ph] * sr), dtype=np.int16)
+                    pieces.append(gap)
+                    out_pos += len(gap)
+                    last_cut = pos
             if cur:
-                cur["end"] = pos / sr
+                cur["end"] = (out_pos + pos - last_cut) / sr
                 words.append(cur)
-            audio.append(chunk.audio_int16_array)
-            t0 += len(chunk.audio_int16_array)
-        pcm = np.concatenate(audio)
+            pieces.append(pcm[last_cut:])
+            out_pos += len(pcm) - last_cut
+            if gap_after:
+                gap = np.zeros(int(PHRASE_GAP * sr), dtype=np.int16)
+                pieces.append(gap)
+                out_pos += len(gap)
+        pcm = np.concatenate(pieces)
         raw = OUT / f"{key}.raw.wav"
         with wave.open(str(raw), "wb") as w:
             w.setnchannels(1)
@@ -80,14 +108,17 @@ def main():
             check=True,
         )
         raw.unlink()
-        # attach the display words (counts match for these lines; fall back to phonemes)
-        tw = text.replace(",", "").replace(".", "").replace("?", "").split()
+        # "3D" is two phoneme words (three, dee); give the label to the first
+        tw = display.split()
+        labels = []
+        for t in tw:
+            labels += ([t, "3D"] if t == "3D" else [t])
         for i, wd in enumerate(words):
-            wd["word"] = tw[i] if len(tw) == len(words) else wd["ph"]
+            wd["word"] = labels[i] if len(labels) == len(words) else wd["ph"]
             wd["start"] = round(wd["start"], 3)
             wd["end"] = round(wd["end"], 3)
-        meta[key] = {"text": text, "duration": round(len(pcm) / sr, 3), "words": words}
-        print(f"{key:7s} {len(pcm) / sr:5.2f}s  " + " ".join(f"{w['word']}@{w['start']:.2f}" for w in words))
+        meta[key] = {"text": display, "duration": round(len(pcm) / sr, 3), "words": words}
+        print(f"{key:7s} {len(pcm) / sr:5.2f}s  " + " ".join(f"{w['word']}({w['ph']})@{w['start']:.2f}" for w in words))
     (ROOT / "src/vosu/vo.json").write_text(json.dumps(meta, indent=1, ensure_ascii=False))
 
 

@@ -1,240 +1,240 @@
 {
  "intro": {
-  "text": "Meet Vohsoo.",
-  "duration": 0.94,
+  "text": "Meet VOSU",
+  "duration": 0.882,
   "words": [
    {
     "ph": "mˈiːt",
     "start": 0.081,
-    "end": 0.29,
+    "end": 0.302,
     "word": "Meet"
    },
    {
-    "ph": "vˈoʊsuː",
-    "start": 0.372,
+    "ph": "vˈoʊsu",
+    "start": 0.36,
     "end": 0.848,
-    "word": "Vohsoo"
+    "word": "VOSU"
    }
   ]
  },
  "studio": {
-  "text": "Your AI studio for video, image, audio, and 3D.",
-  "duration": 2.786,
+  "text": "Your AI studio for video images audio and 3D",
+  "duration": 3.016,
   "words": [
    {
     "ph": "jʊɹ",
-    "start": 0.023,
-    "end": 0.093,
-    "word": "jʊɹ"
+    "start": 0.035,
+    "end": 0.104,
+    "word": "Your"
    },
    {
     "ph": "ˌeɪˈaɪ",
     "start": 0.128,
-    "end": 0.302,
-    "word": "ˌeɪˈaɪ"
+    "end": 0.29,
+    "word": "AI"
    },
    {
     "ph": "stˈuːdɪʲˌoʊ",
-    "start": 0.348,
-    "end": 0.65,
-    "word": "stˈuːdɪʲˌoʊ"
+    "start": 0.337,
+    "end": 0.615,
+    "word": "studio"
    },
    {
     "ph": "fɔːɹ",
-    "start": 0.673,
-    "end": 0.766,
-    "word": "fɔːɹ"
+    "start": 0.639,
+    "end": 0.731,
+    "word": "for"
    },
    {
     "ph": "vˈɪdɪʲoʊ",
-    "start": 0.789,
-    "end": 1.022,
-    "word": "vˈɪdɪʲoʊ"
+    "start": 0.755,
+    "end": 0.94,
+    "word": "video"
    },
    {
-    "ph": "ˈɪmɪdʒ",
-    "start": 1.103,
-    "end": 1.358,
-    "word": "ˈɪmɪdʒ"
+    "ph": "ˈɪmɪdʒᵻz",
+    "start": 1.137,
+    "end": 1.497,
+    "word": "images"
    },
    {
     "ph": "ˈɔːdɪʲˌoʊ",
-    "start": 1.498,
-    "end": 1.753,
-    "word": "ˈɔːdɪʲˌoʊ"
+    "start": 1.728,
+    "end": 1.937,
+    "word": "audio"
    },
    {
     "ph": "ænd",
-    "start": 1.8,
-    "end": 2.009,
-    "word": "ænd"
+    "start": 2.133,
+    "end": 2.284,
+    "word": "and"
    },
    {
     "ph": "θɹˈiː",
-    "start": 2.148,
-    "end": 2.392,
-    "word": "θɹˈiː"
+    "start": 2.4,
+    "end": 2.656,
+    "word": "3D"
    },
    {
     "ph": "dˈiː",
-    "start": 2.426,
-    "end": 2.694,
-    "word": "dˈiː"
+    "start": 2.714,
+    "end": 2.888,
+    "word": "3D"
    }
   ]
  },
  "nodes": {
-  "text": "Turn ideas into cinematic sequences.",
-  "duration": 2.403,
+  "text": "Turn ideas into cinematic sequences",
+  "duration": 2.54,
   "words": [
    {
     "ph": "tˈɜːn",
     "start": 0.023,
-    "end": 0.209,
+    "end": 0.197,
     "word": "Turn"
    },
    {
     "ph": "aɪdˈiəz",
-    "start": 0.29,
-    "end": 0.813,
+    "start": 0.279,
+    "end": 0.766,
     "word": "ideas"
    },
    {
     "ph": "ˌɪntʊ",
-    "start": 0.871,
-    "end": 1.115,
+    "start": 0.813,
+    "end": 1.057,
     "word": "into"
    },
    {
     "ph": "sˌɪnɪmˈæɾɪk",
-    "start": 1.149,
-    "end": 1.683,
+    "start": 1.115,
+    "end": 1.672,
     "word": "cinematic"
    },
    {
     "ph": "sˈiːkwənsᵻz",
-    "start": 1.707,
-    "end": 2.334,
+    "start": 1.718,
+    "end": 2.299,
     "word": "sequences"
    }
   ]
  },
  "tools": {
-  "text": "Pro tools, one click away.",
-  "duration": 1.846,
+  "text": "Pro tools one click away",
+  "duration": 1.903,
   "words": [
    {
     "ph": "pɹˈoʊ",
-    "start": 0.035,
-    "end": 0.267,
+    "start": 0.046,
+    "end": 0.255,
     "word": "Pro"
    },
    {
     "ph": "tˈuːlz",
     "start": 0.325,
-    "end": 0.755,
+    "end": 0.731,
     "word": "tools"
    },
    {
     "ph": "wˈʌn",
-    "start": 0.952,
-    "end": 1.207,
+    "start": 1.056,
+    "end": 1.299,
     "word": "one"
    },
    {
     "ph": "klˈɪk",
-    "start": 1.254,
-    "end": 1.451,
+    "start": 1.357,
+    "end": 1.543,
     "word": "click"
    },
    {
     "ph": "ɐwˈeɪ",
-    "start": 1.486,
-    "end": 1.753,
+    "start": 1.578,
+    "end": 1.845,
     "word": "away"
    }
   ]
  },
  "market": {
-  "text": "And get paid on the Creator Marketplace.",
-  "duration": 2.229,
+  "text": "And get paid on the Creator Marketplace",
+  "duration": 2.299,
   "words": [
    {
     "ph": "ænd",
-    "start": 0.035,
-    "end": 0.163,
+    "start": 0.046,
+    "end": 0.151,
     "word": "ænd"
    },
    {
     "ph": "ɡɛt",
-    "start": 0.221,
-    "end": 0.372,
+    "start": 0.197,
+    "end": 0.36,
     "word": "ɡɛt"
    },
    {
     "ph": "pˈeɪd",
     "start": 0.406,
-    "end": 0.731,
+    "end": 0.778,
     "word": "pˈeɪd"
    },
    {
     "ph": "ɔnðə",
-    "start": 0.801,
-    "end": 0.975,
+    "start": 0.824,
+    "end": 1.022,
     "word": "ɔnðə"
    },
    {
     "ph": "kɹiːʲˈeɪɾɚ",
-    "start": 0.998,
-    "end": 1.416,
+    "start": 1.068,
+    "end": 1.451,
     "word": "kɹiːʲˈeɪɾɚ"
    },
    {
     "ph": "mˈɑːɹkɪtplˌeɪs",
-    "start": 1.474,
-    "end": 2.148,
+    "start": 1.544,
+    "end": 2.229,
     "word": "mˈɑːɹkɪtplˌeɪs"
    }
   ]
  },
  "outro": {
-  "text": "Vohsoo. What are you creating today?",
-  "duration": 1.637,
+  "text": "VOSU What are you creating today",
+  "duration": 1.746,
   "words": [
    {
-    "ph": "vˈoʊsuː",
-    "start": 0.035,
-    "end": 0.395,
-    "word": "Vohsoo"
+    "ph": "vˈoʊsu",
+    "start": 0.093,
+    "end": 0.36,
+    "word": "VOSU"
    },
    {
     "ph": "wˌʌt",
-    "start": 0.499,
-    "end": 0.592,
+    "start": 0.69,
+    "end": 0.782,
     "word": "What"
    },
    {
     "ph": "ɑːɹ",
-    "start": 0.615,
-    "end": 0.708,
+    "start": 0.806,
+    "end": 0.887,
     "word": "are"
    },
    {
     "ph": "juː",
-    "start": 0.743,
-    "end": 0.824,
+    "start": 0.922,
+    "end": 1.015,
     "word": "you"
    },
    {
     "ph": "kɹiːʲˈeɪɾɪŋ",
-    "start": 0.859,
-    "end": 1.265,
+    "start": 1.038,
+    "end": 1.409,
     "word": "creating"
    },
    {
     "ph": "tədˈeɪ",
-    "start": 1.312,
-    "end": 1.602,
+    "start": 1.433,
+    "end": 1.676,
     "word": "today"
    }
   ]

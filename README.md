@@ -77,15 +77,17 @@ independently and lands back on its original layout.
 | Time | Shot | Animation | Voiceover |
 |------|------|-----------|-----------|
 | 0–2s | Logo | V·O·S·U land one per beat, glint and specular sweep, then the camera flies through the star cut into the "O" | "Meet VOSU." |
-| 2–5s | Home / studio | Headline rises, the prompt placeholder types on, each category pill lights on its spoken word as the matching media card floats in | "Your AI studio for video, image, audio, and 3D." |
+| 2–5s | Home / studio | Headline rises, the prompt placeholder types on, each category pill (Studios, Video, Images, Audio, 3D) lights on its spoken word as the matching media card floats in | "Your AI studio for video, images, audio, and 3D." |
 | 5–8s | Node editor | Whip pan in, nodes pop in sequence, real wires revealed left to right, signal pulses, camera tracks to the video generator | "Turn ideas into cinematic sequences." |
 | 8–10.5s | Popular tools | Cards cascade with a 3D flip, push onto Background Remover, the button is clicked on "click", kinetic "One click away." | "Pro tools, one click away." |
 | 10.5–13s | Creator Marketplace | Hero builds piece by piece, cards orbit into place, CTA pressed on the beat, camera dives into the white card | "And get paid on the Creator Marketplace." |
 | 13–15s | End card | The mark on light, then the product's own line set word by word with the voice, and vosu.ai | "VOSU. What are you creating today?" |
 
 **Sound:** the voiceover is neural TTS ([Piper](https://github.com/rhasspy/piper), voice
-`en-us-ryan-high`), synthesized locally. The brand is spelled phonetically ("Vohsoo",
-/voʊsuː/) for the voice and stays VOSU on screen. Phoneme alignments give per-word
+`en-us-ryan-high`), synthesized locally. "VOSU" is passed to the voice as exact phonemes
+(/ˈvoʊsu/, a crisp "VO-su" that isn't drawn out) and stays VOSU on screen. The read is
+deliberately calm: a slower pace, steadier rhythm, and short breaths inserted at each comma
+and between phrases. Phoneme alignments give per-word
 timestamps (`src/vosu/vo.json`), which drive the pill highlights, the click and the
 end-card words. The music (F major, 120 BPM) and the UI sound design are synthesized in
 `scripts/vosu/generate-audio.mjs`. Music ducks under the voice, which sits about +9.6 dB

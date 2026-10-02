@@ -11,7 +11,7 @@ const OX = 708 - 960 / K;
 const OY = 262 - 540 / K;
 
 const PILLS: {id: string; at: number}[] = [
-  {id: 'home_pill_studios', at: 80},
+  {id: 'home_pill_studios', at: wordFrame('studio')},
   {id: 'home_pill_video', at: wordFrame('video')},
   {id: 'home_pill_images', at: wordFrame('image')},
   {id: 'home_pill_audio', at: wordFrame('audio')},

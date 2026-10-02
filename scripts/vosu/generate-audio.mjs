@@ -293,7 +293,7 @@ boom(f2s(C.zoomThrough + 17), 0.4, 33);
 
 // 2. Studio: element pops, typing ticks, a tone per category word, card whooshes
 pop(f2s(47), 79, 0.1);
-pop(f2s(62), 76, 0.12, -0.3);
+pop(wordAt('studio'), 82, 0.13, -0.6); // Studios pill
 for (let f = C.typeOn; f < C.typeOn + 16; f += 1.5) tick(f2s(f), 0.05 + rnd() * 0.04, (rnd() - 0.5) * 0.4);
 ['video', 'image', 'audio', 'threeD'].forEach((w, i) => {
   pop(wordAt(w), [84, 86, 88, 91][i], 0.14, [-0.5, -0.4, 0.4, 0.5][i]);
@@ -429,7 +429,7 @@ for (let i = 0; i < N; i++) {
     o[i] = drums[ch][i] * 0.75 * dd + music[ch][i] * md + sfx[ch][i] * 0.85 * sd + voice[ch][i] * 1.6 + wet[ch][i] * 0.07;
   }
 }
-const fade = Math.floor(0.35 * SR);
+const fade = Math.floor(0.22 * SR);
 for (let i = 0; i < fade; i++) {
   const g = Math.pow(1 - i / fade, 2);
   L[N - fade + i] *= g;

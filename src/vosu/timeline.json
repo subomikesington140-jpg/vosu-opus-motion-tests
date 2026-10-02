@@ -12,14 +12,15 @@
   },
   "vo": {
     "intro": 0.42,
-    "studio": 2.08,
+    "studio": 1.62,
     "nodes": 5.18,
     "tools": 8.18,
-    "market": 10.55,
-    "outro": 13.1
+    "market": 10.45,
+    "outro": 12.95
   },
   "words": {
     "brand": ["intro", 1],
+    "studio": ["studio", 2],
     "video": ["studio", 4],
     "image": ["studio", 5],
     "audio": ["studio", 6],
@@ -41,7 +42,7 @@
     "letters": [5, 11, 17, 23],
     "glint": 28,
     "zoomThrough": 44,
-    "typeOn": 72,
+    "typeOn": 54,
     "nodePops": [149, 159, 165, 171],
     "toolsCascade": 237,
     "toolsPush": 266,
