@@ -18,13 +18,13 @@ from piper import PiperVoice, SynthesisConfig
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "public/vosu/vo"
-# The brand is passed as raw phonemes so it is said crisply as "VO-su" (/ˈvoʊsu/),
-# with a short unstressed second syllable rather than a drawn-out "soo".
-BRAND = "[[ vˈoʊsu ]]"
+# The brand is passed as raw phonemes: "VO-soo" (/ˈvoʊsuː/) with a full second
+# syllable, read at natural speed so it is neither clipped ("Vos") nor dragged.
+BRAND = "[[ vˈoʊsuː ]]"
 # key: (spoken text, on-screen words used for timing labels)
 LINES = {
     "intro": (f"Meet {BRAND}.", "Meet VOSU"),
-    "studio": ("Your AI studio for video, images, audio, and 3D.", "Your AI studio for video images audio and 3D"),
+    "studio": ("Your AI studio for videos, images, audio, and 3D.", "Your AI studio for videos images audio and 3D"),
     "nodes": ("Turn ideas into cinematic sequences.", "Turn ideas into cinematic sequences"),
     "tools": ("Pro tools, one click away.", "Pro tools one click away"),
     "market": ("And get paid on the Creator Marketplace.", "And get paid on the Creator Marketplace"),
@@ -32,9 +32,9 @@ LINES = {
     "outro": (f"{BRAND} | What are you creating today?", "VOSU What are you creating today"),
 }
 # calm, even read: slower pace on the list line, steadier rhythm everywhere
-PACE = {"intro": 1.0, "studio": 1.25, "nodes": 1.1, "tools": 1.1, "market": 1.08, "outro": 1.08}
+PACE = {"intro": 1.0, "studio": 1.32, "nodes": 1.1, "tools": 1.1, "market": 1.08, "outro": 1.03}
 # breaths inserted after punctuation (seconds)
-PAUSE = {",": 0.15, ".": 0.16}
+PAUSE = {",": 0.2, ".": 0.16}
 PHRASE_GAP = 0.26
 
 

@@ -11,9 +11,9 @@
     "end": {"from": 384, "to": 450}
   },
   "vo": {
-    "intro": 0.42,
-    "studio": 1.62,
-    "nodes": 5.18,
+    "intro": 0.3,
+    "studio": 1.4,
+    "nodes": 5.25,
     "tools": 8.18,
     "market": 10.45,
     "outro": 12.95

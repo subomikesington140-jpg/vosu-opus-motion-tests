@@ -77,7 +77,7 @@ independently and lands back on its original layout.
 | Time | Shot | Animation | Voiceover |
 |------|------|-----------|-----------|
 | 0–2s | Logo | V·O·S·U land one per beat, glint and specular sweep, then the camera flies through the star cut into the "O" | "Meet VOSU." |
-| 2–5s | Home / studio | Headline rises, the prompt placeholder types on, each category pill (Studios, Video, Images, Audio, 3D) lights on its spoken word as the matching media card floats in | "Your AI studio for video, images, audio, and 3D." |
+| 2–5s | Home / studio | Headline rises, the prompt placeholder types on, each category pill (Studios, Video, Images, Audio, 3D) lights on its spoken word as the matching media card floats in | "Your AI studio for videos, images, audio, and 3D." |
 | 5–8s | Node editor | Whip pan in, nodes pop in sequence, real wires revealed left to right, signal pulses, camera tracks to the video generator | "Turn ideas into cinematic sequences." |
 | 8–10.5s | Popular tools | Cards cascade with a 3D flip, push onto Background Remover, the button is clicked on "click", kinetic "One click away." | "Pro tools, one click away." |
 | 10.5–13s | Creator Marketplace | Hero builds piece by piece, cards orbit into place, CTA pressed on the beat, camera dives into the white card | "And get paid on the Creator Marketplace." |
@@ -85,7 +85,7 @@ independently and lands back on its original layout.
 
 **Sound:** the voiceover is neural TTS ([Piper](https://github.com/rhasspy/piper), voice
 `en-us-ryan-high`), synthesized locally. "VOSU" is passed to the voice as exact phonemes
-(/ˈvoʊsu/, a crisp "VO-su" that isn't drawn out) and stays VOSU on screen. The read is
+(/ˈvoʊsuː/, "VO-soo" with a full second syllable, at natural speed) and stays VOSU on screen. The read is
 deliberately calm: a slower pace, steadier rhythm, and short breaths inserted at each comma
 and between phrases. Phoneme alignments give per-word
 timestamps (`src/vosu/vo.json`), which drive the pill highlights, the click and the
