@@ -101,3 +101,41 @@ npm run vosu:render      # mix audio + render out/vosu-promo.mp4 (uses committed
 npm run vosu:assets      # re-cut UI components from assets/vosu-source/
 KOKORO_DIR=/path/with/kokoro-v1.0.onnx+voices-v1.0.bin npm run vosu:vo   # re-record the voiceover
 ```
+
+---
+
+# PROJECT 01: architectural construction film
+
+**Rendered output:** [`out/arch-film.mp4`](out/arch-film.mp4) (composition `ArchFilm`)
+
+A 15-second, 1920×1080 / 30 fps architectural presentation of a 5-level mixed-use
+building, built as a real Three.js scene (`@remotion/three` + `@react-three/fiber`).
+The building is procedural. Foundation, columns, slabs, structural walls and core,
+window panes, mullions, balconies, balustrades, soffit LEDs, interior light planes
+and roof are separate instanced components, and each instance has its own build cue
+and motion.
+
+| Time | Stage | What happens |
+|------|-------|--------------|
+| 0–2s | Framework | The ground grid, structural axes and dimension strings draw out. The building wireframe draws itself bottom-up, segment by segment |
+| 2–5s | Construction | Foundation, then LEVEL 01–05 (columns grow, slabs drop and settle), structural walls, glazing ripple, balconies slide out. Leader-line labels per stage |
+| 5–8s | Program | Each floor highlights in brass and gets a pinned leader label: lobby, offices, executive suites, residential, penthouse |
+| 8–11s | Materiality | A scan band sweeps up the building, blending white clay into board-formed concrete, reflective glazing and bronze metal per fragment. Interiors switch on and the dark stage turns into a blue-hour sky. The city rises in |
+| 11–13s | Context | Wide orbit around the south-west corner |
+| 13–15s | Presentation | Project panel with a self-drawing floor plan, then the title THE FUTURE OF URBAN LIVING |
+
+How it works:
+
+- `src/building/model.ts`: the procedural building and site as instanced items with build cues
+- `src/building/materials.ts`: clay-to-real reveal shader (world-height driven), canvas textures
+- `src/building/lines.ts`: self-drawing line segments (wireframe, grid, axes, dimensions)
+- `src/building/camera.ts`: the camera move as one Hermite spline. The overlay projects 3D anchors through the same function, so labels stay pinned to floors
+- `src/building/Overlay.tsx`: typography, HUD, leaders, presentation panel
+- `scripts/building/generate-audio.mjs`: score and sound effects synthesized from the same cue sheet (`src/building/timeline.json`)
+
+```bash
+npm run arch:render   # soundtrack + out/arch-film.mp4
+```
+
+Rendering needs WebGL. Without a GPU, use SwiftShader through ANGLE (`--gl=swangle`,
+already set in `remotion.config.ts`).

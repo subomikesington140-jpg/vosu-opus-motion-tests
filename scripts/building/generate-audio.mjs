@@ -1,7 +1,6 @@
-// "Construct" soundtrack: cinematic score + construction / transition sound design
-// for the 15s apartment-tower film (VOSU-generated picture, three 5s clips).
-// Picture beats: 0-5 blueprint -> foundation -> floors | 5-10 walls, glass,
-// balconies, materials | 10-15 lighting + orbit.
+// Soundtrack for the ArchFilm composition: cinematic score + construction, UI and
+// transition sound design. Every hit is placed from src/building/timeline.json,
+// the same cue sheet the picture reads.
 // Output: public/building/soundtrack.wav (44.1 kHz, 16-bit stereo, -14 LUFS)
 
 import fs from 'node:fs';
@@ -10,6 +9,7 @@ import {fileURLToPath} from 'node:url';
 import {execFileSync} from 'node:child_process';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+const C = JSON.parse(fs.readFileSync(path.join(root, 'src/building/timeline.json'), 'utf8')).cues;
 const SR = 44100;
 const DUR = 15;
 const N = SR * DUR;
@@ -221,79 +221,114 @@ function powerOn(t, dur, g = 0.12) {
   }
 }
 
+/** Soft UI blip for labels: sine with a small pitch drop and a tick. */
+function pop(t, midi = 84, g = 0.1, pan = 0) {
+  const s = Math.floor(t * SR);
+  const f0 = mtof(midi);
+  const [pl, pr] = panLR(pan);
+  let ph = 0;
+  for (let i = 0; i < 0.14 * SR; i++) {
+    const x = i / SR;
+    ph += (2 * Math.PI * f0 * (1 + 0.3 * Math.exp(-x * 70))) / SR;
+    const v = (Math.sin(ph) * Math.exp(-x * 30) + (i < 30 ? noise() * 0.15 * (1 - i / 30) : 0)) * g;
+    write(sfx, s + i, v * pl, v * pr);
+    write(verb, s + i, v * 0.35);
+  }
+}
+
 // ---------------------------------------------------------------- score (D minor, 90 BPM)
 const BEAT = 60 / 90;
-// sustained string pads: Dm | Bbmaj7 | C | F | Dm(add9)
+// sustained string pads: Dm(sus) | Dm | Bbmaj7 -> C (program) | F (materials) | Dm (orbit) | Fmaj9 (title)
 const PADS = [
-  {t: 0, d: 5, notes: [50, 57, 62, 65], cut: [260, 900]},
-  {t: 5, d: 2.5, notes: [46, 58, 62, 65, 69], cut: [900, 1300]},
-  {t: 7.5, d: 2.5, notes: [48, 55, 64, 67, 72], cut: [1100, 1700]},
-  {t: 10, d: 2.5, notes: [41, 53, 60, 65, 69, 72], cut: [1600, 2400]},
-  {t: 12.5, d: 2.5, notes: [38, 50, 57, 62, 64, 65, 69], cut: [2200, 1400]},
+  {t: 0, d: 2, notes: [50, 57, 62, 64], cut: [220, 600], g: 0.034, att: 1.6},
+  {t: 2, d: 3, notes: [50, 57, 62, 65], cut: [600, 1000], g: 0.04, att: 0.4},
+  {t: 5, d: 1.5, notes: [46, 58, 62, 65, 69], cut: [900, 1200], g: 0.044, att: 0.3},
+  {t: 6.5, d: 1.5, notes: [48, 55, 64, 67, 72], cut: [1000, 1400], g: 0.044, att: 0.3},
+  {t: 8, d: 3, notes: [41, 53, 60, 65, 69, 72], cut: [1100, 2600], g: 0.05, att: 0.5},
+  {t: 11, d: 2, notes: [38, 50, 57, 62, 65, 69], cut: [2400, 2000], g: 0.05, att: 0.25},
+  {t: 13, d: 2, notes: [41, 53, 60, 64, 67, 69, 76], cut: [1600, 1100], g: 0.046, att: 0.4},
 ];
 PADS.forEach((p, k) =>
   p.notes.forEach((m, j) =>
-    saw(p.t, p.d + 0.05, m, {gain: k === 0 ? 0.04 : 0.048, cutoff: p.cut[0], cutoffTo: p.cut[1], attack: k === 0 ? 2.2 : 0.35, voices: 4, detune: 0.2, pan: (j / (p.notes.length - 1) - 0.5) * 1.2, send: 0.6, release: k === 4 ? 1.2 : 0.5}),
+    saw(p.t, p.d + 0.05, m, {gain: p.g, cutoff: p.cut[0], cutoffTo: p.cut[1], attack: p.att, voices: 4, detune: 0.2, pan: (j / (p.notes.length - 1) - 0.5) * 1.2, send: 0.6, release: k === PADS.length - 1 ? 1.4 : 0.5}),
   ),
 );
-// sub drone under everything
-sine(0, 15, 26, 0.16, 1.5);
-// low-string ostinato: 8ths from the foundation, 16ths from the light-up
+sine(0, 15, 26, 0.15, 1.5); // sub drone
+// low-string ostinato: 8ths through construction + program, 16ths for materials + orbit
 const OST = [
   [2.0, 5, [38, 38, 45, 38]],
-  [5, 7.5, [34, 34, 41, 46]],
-  [7.5, 10, [36, 36, 43, 48]],
-  [10, 12.5, [41, 41, 48, 53]],
-  [12.5, 14.2, [38, 38, 45, 50]],
+  [5, 6.5, [34, 34, 41, 46]],
+  [6.5, 8, [36, 36, 43, 48]],
+  [8, 11, [41, 41, 48, 53]],
+  [11, 12.9, [38, 38, 45, 50]],
 ];
 for (const [a, b, pat] of OST) {
-  const step = a >= 10 ? BEAT / 4 : BEAT / 2;
+  const step = a >= 8 ? BEAT / 4 : BEAT / 2;
   let k = 0;
   for (let t = a; t < b - 0.02; t += step, k++) {
     const accent = k % 4 === 0;
-    saw(t, step * 0.8, pat[k % 4], {gain: (a < 5 ? 0.05 : 0.07) * (accent ? 1.25 : 1), cutoff: 260, env: a >= 10 ? 2200 : 1200, decay: 18, voices: 2, detune: 0.1, pan: k % 2 ? 0.25 : -0.25, send: 0.2, release: 0.08});
+    saw(t, step * 0.8, pat[k % 4], {gain: (a < 5 ? 0.045 : a < 8 ? 0.055 : 0.07) * (accent ? 1.25 : 1), cutoff: 260, env: a >= 8 ? 2200 : 1200, decay: 18, voices: 2, detune: 0.1, pan: k % 2 ? 0.25 : -0.25, send: 0.2, release: 0.08});
   }
 }
-// high "heroic" line over the reveal
-[[10, 0.75, 81], [10.75, 0.75, 79], [11.5, 1.0, 77], [12.5, 0.75, 76], [13.25, 0.75, 74], [14.0, 1.0, 74]].forEach(([t, d, m]) =>
-  saw(t, d, m, {gain: 0.03, cutoff: 1800, attack: 0.08, voices: 3, detune: 0.1, send: 0.7, release: 0.5}),
+// a high melodic line over the reveal and orbit
+[[8.6, 0.75, 81], [9.35, 0.75, 79], [10.1, 0.9, 77], [11.0, 0.75, 76], [11.75, 0.75, 77], [12.5, 0.9, 74]].forEach(([t, d, m]) =>
+  saw(t, d, m, {gain: 0.028, cutoff: 1800, attack: 0.08, voices: 3, detune: 0.1, send: 0.7, release: 0.5}),
 );
-// taiko pattern: sparse in the build, driving in the orbit
-[2.0, 3.333, 4.667].forEach((t) => taiko(t, 0.55, 36));
-[5, 6.333, 7.5, 8.833].forEach((t) => taiko(t, 0.5, 38, 0.2));
-for (let t = 10; t < 14.0; t += BEAT) taiko(t, Math.round((t - 10) / BEAT) % 2 ? 0.45 : 0.7, 36, Math.round((t - 10) / BEAT) % 2 ? 0.3 : -0.3);
-for (let k = 0; k < 6; k++) taiko(13.33 + k * (BEAT / 4), 0.3 + k * 0.06, 41, k % 2 ? 0.4 : -0.4); // roll into the final hit
-taiko(14.0, 0.95, 33);
+// taiko: marks the build, drives the orbit, a breath for the panel, final hit on the title
+taiko(C.foundation, 0.55, 36);
+[C.levels[1], C.levels[3]].forEach((t) => taiko(t, 0.35, 38, 0.2));
+[C.program[0], C.program[2], C.program[4]].forEach((t) => taiko(t, 0.3, 40, -0.2));
+taiko(C.revealStart, 0.5, 36);
+taiko(C.revealStart + BEAT * 2, 0.4, 38, 0.3);
+for (let t = C.orbit; t < C.panel - 0.1; t += BEAT) taiko(t, Math.round((t - C.orbit) / BEAT) % 2 ? 0.42 : 0.65, 36, Math.round((t - C.orbit) / BEAT) % 2 ? 0.3 : -0.3);
+for (let k = 0; k < 6; k++) taiko(C.title - 0.5 + k * (0.5 / 6), 0.18 + k * 0.05, 41, k % 2 ? 0.4 : -0.4);
+taiko(C.title, 0.9, 33);
 
 // ---------------------------------------------------------------- sound design
-// 0-2s blueprint: scanning ticks as the wireframe draws
-for (let k = 0; k < 18; k++) tick(0.3 + k * 0.095, 0.05 + k * 0.003, -0.6 + k * 0.07, 3200 + k * 60);
-whoosh(0.0, 1.6, {gain: 0.12, from: 2000, to: 9000, shape: 'up', q: 3});
-// foundation drop
-swell(1.95, 0.6, 0.12);
-boom(1.95, 0.55, 26, 2.2);
-// floors: one clunk per storey, climbing
-for (let k = 0; k < 12; k++) clunk(2.35 + k * 0.22, 0.24 + k * 0.006, k * 0.6, (k % 2 ? 0.35 : -0.35) * (1 - k / 14));
-// cut 1 -> walls and glass
-whoosh(4.6, 0.8, {gain: 0.38, from: 250, to: 6000, pan: -0.7, panTo: 0.7});
-[5.4, 5.9, 6.4].forEach((t, k) => whoosh(t, 0.45, {gain: 0.2, from: 400, to: 2500, pan: -0.6 + k * 0.6}));
-glassSweep(6.2, 1.6, 0.06);
-// balconies: staggered air pushes
-[7.9, 8.2, 8.5, 8.8, 9.1].forEach((t, k) => whoosh(t, 0.35, {gain: 0.16, from: 600, to: 3500, pan: k % 2 ? 0.5 : -0.5}));
-// materials -> lighting riser
-whoosh(8.8, 1.2, {gain: 0.32, from: 200, to: 8000, shape: 'up', q: 1.2});
-swell(10.0, 1.4, 0.3);
-// 10s light-up hit
-boom(10.0, 0.75, 26, 3.0);
-powerOn(9.9, 1.6, 0.1);
-glassSweep(10.05, 0.9, 0.05, [81, 84, 86, 89, 93, 96]);
-bell(10.0, 62, 0.12, {ratio: 1, index: 2.2, decay: 2, send: 1});
-// orbit: wind passes
-whoosh(11.2, 1.8, {gain: 0.18, from: 300, to: 1800, pan: 0.8, panTo: -0.8, q: 1});
-whoosh(12.8, 1.4, {gain: 0.15, from: 300, to: 1500, pan: -0.6, panTo: 0.6, q: 1});
-// final resolve
-boom(14.0, 0.8, 24, 1.0);
-bell(14.0, 74, 0.08, {ratio: 2, index: 1.5, decay: 3, send: 1});
+// framework: scanning ticks as lines draw, dimension ticks
+for (let k = 0; k < 16; k++) tick(C.wireStart + k * 0.1, 0.04 + k * 0.002, -0.6 + k * 0.08, 3200 + k * 70);
+for (let k = 0; k < 5; k++) tick(C.dimStart + 0.3 + k * 0.08, 0.05, 0.5, 5200);
+whoosh(0.0, 1.8, {gain: 0.1, from: 2000, to: 9000, shape: 'up', q: 3});
+pop(C.introLabel + 0.05, 86, 0.06, -0.6);
+// foundation
+swell(C.foundation, 0.6, 0.12);
+boom(C.foundation, 0.55, 26, 2.0);
+pop(C.foundation + 0.1, 79, 0.06, -0.5);
+// levels: slab lands with a clunk, label blips
+C.levels.forEach((t, i) => {
+  clunk(t + 0.25, 0.26, i * 1.2, i % 2 ? 0.3 : -0.3);
+  pop(t + 0.08, 81 + [0, 2, 3, 5, 7][i], 0.05, -0.5);
+});
+// structural walls lock in
+for (let i = 0; i < 5; i++) {
+  clunk(C.walls + i * 0.06 + 0.12, 0.12, 9 + i, 0.5);
+  tick(C.walls + i * 0.06 + 0.13, 0.06, 0.5, 2400);
+}
+// glazing ripple + balconies
+glassSweep(C.windows, 0.55, 0.05);
+for (let i = 0; i < 3; i++) whoosh(C.balconies + i * C.balconyLevelStep - 0.05, 0.35, {gain: 0.14, from: 600, to: 3200, pan: -0.5 + i * 0.4});
+// program: a rising blip per floor as it highlights
+C.program.forEach((t, i) => {
+  pop(t, 76 + [0, 3, 5, 7, 10][i], 0.09, 0.5);
+  bell(t + 0.18, 88 + [0, 3, 5, 7, 10][i], 0.025, {ratio: 2, index: 0.8, decay: 10, pan: 0.6});
+});
+whoosh(C.programOut - 0.1, 0.6, {gain: 0.12, from: 3000, to: 500, shape: 'down'});
+// materials: riser into the sweep, scan shimmer, interiors power up
+swell(C.revealStart, 0.8, 0.16);
+whoosh(C.revealStart, C.revealEnd - C.revealStart, {gain: 0.16, from: 300, to: 7000, shape: 'up', q: 2});
+glassSweep(C.revealStart + 0.3, 2.0, 0.035, [74, 77, 81, 84, 86, 89]);
+powerOn(C.revealStart + 0.4, 2.2, 0.06);
+C.specTags.forEach((t, i) => pop(t, 84 + i * 2, 0.06, -0.6));
+// orbit
+swell(C.orbit, 0.9, 0.22);
+boom(C.orbit, 0.45, 26, 1.6);
+whoosh(C.orbit, 2.0, {gain: 0.2, from: 300, to: 1800, pan: 0.8, panTo: -0.8, q: 1});
+// presentation panel + title
+for (let k = 0; k < 5; k++) pop(C.panel + 0.15 + k * 0.12, 81 + k * 2, 0.05, 0.6);
+for (let k = 0; k < 6; k++) tick(C.panel + 0.75 + k * 0.08, 0.035, 0.6, 4800);
+boom(C.title, 0.7, 24, 1.0);
+bell(C.title, 74, 0.08, {ratio: 2, index: 1.5, decay: 2.5, send: 1});
+bell(C.title + 0.02, 81, 0.05, {ratio: 1, index: 1.2, decay: 2.2, send: 1});
 
 // ---------------------------------------------------------------- mix
 function reverb(input) {
