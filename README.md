@@ -19,8 +19,8 @@ with JetBrains Mono labels. Everything runs on a 120 BPM grid (1 beat = 15 frame
 | 03 | 4.0–6.5s | **Morph** | Circle → triangle → square → hexagon → star, one per kick, using spring overshoot, rotational follow-through, echo trails and a CSS-3D orbiting camera with parallax layers | Anticipation squash, then a white-hot flash |
 | 04 | 6.5–9.0s | **Swarm** | The star shatters into 720 particles riding a curl-noise flow field, which snap into a grid on the downbeat, with ripple waves on each kick | Camera dives into the grid |
 | 05 | 9.0–12.0s | **Depth** | A pseudo-3D camera surges through floating type planes on each beat, with depth-of-field blur and velocity streaks | Rack focus and crash-zoom into the title, match-cut on the drop |
-| 06 | 12.0–14.0s | **Drop** | Impact flash, a chromatic-split title, a wave-driven field of the morph shapes, and ticker bands | Everything spins and collapses to a point |
-| 07 | 14.0–15.0s | **Resolve** | The point pops, rings out and slides aside to reveal the wordmark | (end) |
+| 06 | 12.0–14.0s | **Drop** | Impact flash, a chromatic-split title, a wave-driven field of the morph shapes, and ticker bands | The frame strains, then implodes into a singularity: a debris vortex, converging rays and a glowing core, followed by a 2-frame blackout with matching audio silence |
+| 07 | 14.0–15.0s | **Resolve** | Detonation: a white-out, an orange afterflash, stacked shockwaves, a ray burst, debris and a zoom punch. The point then slides aside to reveal the wordmark | (end) |
 
 A persistent HUD (timecode, section, BPM and beat counter, crop marks), film grain, a
 vignette and impact-driven camera shake sit over everything.

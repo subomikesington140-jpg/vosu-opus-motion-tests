@@ -418,8 +418,37 @@ for (let b = 24; b < 27; b += 0.5) {
 reverseSwell(b2s(C.finalBeat), b2s(1.4), 0.55);
 whoosh(b2s(C.collapseBeat - 0.2), b2s(1.2), {gain: 0.5, from: 7000, to: 150, shape: 'down', q: 1.8});
 
-// --- 7. Resolve (beats 28-30): final hit and bell chord
-impact(b2s(C.finalBeat), 1, {sub: 33});
+// gravity well: a distorted sub sweep falling into the singularity
+{
+  const t0 = b2s(C.collapseBeat);
+  const dur = b2s(C.finalBeat) - t0;
+  const s = Math.floor(t0 * SR);
+  let ph = 0;
+  for (let i = 0; i < dur * SR; i++) {
+    const p = i / (dur * SR);
+    ph += (2 * Math.PI * (320 * Math.pow(35 / 320, Math.pow(p, 0.7)))) / SR;
+    const v = Math.tanh(Math.sin(ph) * (1 + p * 4)) * Math.pow(p, 1.4) * 0.38;
+    write(sfx, s + i, v);
+  }
+}
+
+// --- 7. Resolve (beats 28-30): detonation and bell chord
+impact(b2s(C.finalBeat), 1.35, {sub: 33});
+impact(b2s(C.finalBeat), 0.6, {sub: 21}); // an octave below for weight
+{
+  // shattering crack + long glassy shimmer tail
+  const s = Math.floor(b2s(C.finalBeat) * SR);
+  const hp = new Biquad();
+  hp.set('hp', 5000, 0.6);
+  for (let i = 0; i < 2 * SR; i++) {
+    const x = i / SR;
+    const crack = noise() * Math.exp(-x * 30) * 0.9;
+    const l = hp.run(noise()) * Math.exp(-x * 1.6) * 0.16;
+    const r = noise() * Math.exp(-x * 1.6) * 0.06;
+    write(sfx, s + i, crack + l, crack + l * 0.4 + r);
+    write(verbSend, s + i, crack * 0.6 + l);
+  }
+}
 CH.Am.forEach((m, j) => blip(b2s(C.finalBeat) + j * 0.012, m + 12, 0.08, {ratio: 2.0, index: 1.5, decay: 1.6, pan: (j - 2) * 0.3, verb: 1}));
 saw(b2s(C.finalBeat), b2s(2), 45, {gain: 0.1, cutoff: 700, envAmt: 600, decay: 2, voices: 4, detune: 0.2, verb: 0.7});
 sub(b2s(C.finalBeat), b2s(1.8), 33, 0.22);
@@ -483,6 +512,17 @@ const R = new Float32Array(N);
 for (let i = 0; i < N; i++) {
   L[i] = drums[0][i] * 0.9 + music[0][i] * duck[i] + sfx[0][i] * 0.8 + wet[0][i] * 0.09;
   R[i] = drums[1][i] * 0.9 + music[1][i] * duck[i] + sfx[1][i] * 0.8 + wet[1][i] * 0.09;
+}
+// the gasp: hard silence under the 2-frame blackout right before the final hit
+{
+  const end = Math.floor(b2s(C.finalBeat) * SR);
+  const start = end - Math.floor((2 / T.fps) * SR);
+  const ramp = Math.floor(0.003 * SR);
+  for (let i = start - ramp; i < end; i++) {
+    const g = i < start ? 1 - (i - (start - ramp)) / ramp : 0;
+    L[i] *= g;
+    R[i] *= g;
+  }
 }
 // fade the last half second
 const fadeLen = Math.floor(0.5 * SR);

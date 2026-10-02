@@ -17,13 +17,14 @@ import {COLORS} from './theme';
 loadFonts();
 
 const S = T.scenes;
-const IMPACTS = [beat(T.cues.shatterBeat), beat(T.cues.dropBeat), beat(T.cues.finalBeat)];
+const IMPACTS = [beat(T.cues.shatterBeat), beat(T.cues.dropBeat)];
+const FINAL = beat(T.cues.finalBeat);
 const BUMPS = T.cues.typeLetterBeats.map(beat).concat(T.cues.morphBeats.map(beat));
 
 /** Global handheld-style camera shake, driven by the impact cues. */
 const Shake: React.FC<{children: React.ReactNode}> = ({children}) => {
   const f = useCurrentFrame();
-  const amp = 22 * pulse(f, IMPACTS, 0.16) + 4 * pulse(f, BUMPS, 0.3) + 0.8;
+  const amp = 22 * pulse(f, IMPACTS, 0.16) + 40 * pulse(f, [FINAL], 0.2) + 4 * pulse(f, BUMPS, 0.3) + 0.8;
   const x = noise3(f * 0.35, 0, 0) * amp;
   const y = noise3(0, f * 0.35, 10) * amp;
   const r = noise3(5, 5, f * 0.3) * amp * 0.04;

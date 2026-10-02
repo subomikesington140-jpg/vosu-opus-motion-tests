@@ -24,7 +24,7 @@ export const Hud: React.FC = () => {
   const onOrange = frame >= T.scenes.type.from && frame < T.scenes.type.to - 6;
   const color = onOrange ? COLORS.ink : COLORS.paper;
   const intro = interpolate(frame, [4, 20], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
-  const outro = interpolate(frame, [T.scenes.resolve.from - 4, T.scenes.resolve.from + 2], [1, 0], {
+  const outro = interpolate(frame, [T.scenes.resolve.from - 14, T.scenes.resolve.from - 8], [1, 0], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
   });
