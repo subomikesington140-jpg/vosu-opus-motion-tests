@@ -43,7 +43,7 @@ export const EndCard: React.FC = () => {
             width: 1400,
             height: 620,
             background: 'radial-gradient(ellipse at 50% 50%, rgba(155,92,255,0.18) 0%, rgba(255,120,80,0.10) 40%, rgba(255,255,255,0) 70%)',
-            opacity: prog(g, 392, 20),
+            opacity: prog(g, C.endBloom + 2, 20),
           }}
         />
         <div style={{position: 'absolute', left: LEFT, top: TOP, width: LW, height: A.logo_full.h * K, transform: `scale(${1 + chord * 0.025})`}}>

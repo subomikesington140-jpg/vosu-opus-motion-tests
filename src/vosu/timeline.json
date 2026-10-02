@@ -4,19 +4,19 @@
   "durationInFrames": 450,
   "scenes": {
     "logo": {"from": 0, "to": 62},
-    "studio": {"from": 40, "to": 152},
-    "nodes": {"from": 140, "to": 242},
-    "tools": {"from": 228, "to": 318},
-    "market": {"from": 308, "to": 392},
-    "end": {"from": 384, "to": 450}
+    "studio": {"from": 40, "to": 166},
+    "nodes": {"from": 152, "to": 252},
+    "tools": {"from": 238, "to": 318},
+    "market": {"from": 308, "to": 382},
+    "end": {"from": 374, "to": 450}
   },
   "vo": {
-    "intro": 0.3,
-    "studio": 1.4,
-    "nodes": 5.25,
-    "tools": 8.18,
-    "market": 10.45,
-    "outro": 12.95
+    "intro": 0.22,
+    "studio": 1.3,
+    "nodes": 5.4,
+    "tools": 8.3,
+    "market": 10.12,
+    "outro": 12.53
   },
   "words": {
     "brand": ["intro", 1],
@@ -37,18 +37,18 @@
     "today": ["outro", 5]
   },
   "cues": {
-    "whip": 140,
-    "swipe": 228,
-    "letters": [5, 11, 17, 23],
+    "whip": 152,
+    "swipe": 238,
+    "letters": [1, 7, 13, 19],
     "glint": 28,
     "zoomThrough": 44,
     "typeOn": 54,
-    "nodePops": [149, 159, 165, 171],
-    "toolsCascade": 237,
-    "toolsPush": 266,
+    "nodePops": [161, 171, 177, 183],
+    "toolsCascade": 247,
+    "toolsPush": 262,
     "marketBuild": 316,
-    "buttonPress": 360,
-    "endBloom": 390,
+    "buttonPress": 352,
+    "endBloom": 380,
     "finalChord": 420,
     "finalGlint": 432
   }

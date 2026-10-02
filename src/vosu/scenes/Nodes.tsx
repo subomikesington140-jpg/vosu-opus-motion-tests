@@ -43,7 +43,7 @@ export const Nodes: React.FC = () => {
   const g = useCurrentFrame() + FROM;
 
   // camera keyframes in source px
-  const KF = [FROM, 166, 186, 206, 226, 242];
+  const KF = [FROM, 178, 198, 216, 234, 252];
   const fx = keys(g, KF, [230, 300, 540, 800, 530, 530], E.quartInOut);
   const fy = keys(g, KF, [175, 200, 340, 525, 340, 335], E.quartInOut);
   const zoom = keys(g, KF, [2.05, 1.9, 1.6, 1.95, 1.45, 1.5], E.quartInOut);
@@ -56,7 +56,7 @@ export const Nodes: React.FC = () => {
   const outY = -1080 * out;
   const outBlur = Math.abs(1080 * (out - prog(g - 1, C.swipe, 14, E.expoInOut))) * 0.3;
 
-  const wireX = keys(g, [150, 212], [270, 960], E.quartInOut);
+  const wireX = keys(g, [C.nodePops[0] + 1, C.nodePops[0] + 61], [270, 960], E.quartInOut);
   const vid = NODES[4].at;
   const vidGlow = prog(g, vid, 8, E.expoOut) * (1 - prog(g, vid + 14, 22, E.quartInOut));
   const vn = [698, 433, 932, 628];
@@ -104,7 +104,7 @@ export const Nodes: React.FC = () => {
       </AbsoluteFill>
       {/* real breadcrumb from the editor's top bar, pinned like a title */}
       {(() => {
-        const p = prog(g, FROM + 6, 14, E.expoOut) * (1 - prog(g, 182, 10, E.quartInOut));
+        const p = prog(g, FROM + 6, 14, E.expoOut) * (1 - prog(g, 194, 10, E.quartInOut));
         const a = A.node_breadcrumb;
         return (
           <div style={{position: 'absolute', left: 70, top: 56, width: a.w * 1.5, height: a.h * 1.5, opacity: p, transform: `translateY(${(1 - p) * -16}px)`}}>

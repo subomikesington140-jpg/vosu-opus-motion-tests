@@ -49,7 +49,7 @@ export const Studio: React.FC = () => {
 
   // camera: continues the fly-through, settles, drifts, then whips out left
   const arrive = prog(g, C.zoomThrough, 26, E.expoOut);
-  const camScale = lerp(1.35, 1, arrive) * keys(g, [70, 142], [1, 1.04], E.quartInOut);
+  const camScale = lerp(1.35, 1, arrive) * keys(g, [70, C.whip + 2], [1, 1.04], E.quartInOut);
   const tilt = lerp(14, 0, arrive);
   // whip pan: shares its curve with the node scene, which rides in alongside
   const whip = prog(g, C.whip, 12, E.expoInOut);

@@ -299,14 +299,14 @@ for (let f = C.typeOn; f < C.typeOn + 16; f += 1.5) tick(f2s(f), 0.05 + rnd() * 
   pop(wordAt(w), [84, 86, 88, 91][i], 0.14, [-0.5, -0.4, 0.4, 0.5][i]);
   whoosh(wordAt(w) - 0.15, 0.4, {gain: 0.16, from: 600, to: 4000, pan: i < 2 ? -0.6 : 0.6});
 });
-whoosh(f2s(141), 0.42, {gain: 0.5, from: 300, to: 6500, pan: 0.8, panTo: -0.8, q: 1.6}); // whip pan
+whoosh(f2s(C.whip + 1), 0.42, {gain: 0.5, from: 300, to: 6500, pan: 0.8, panTo: -0.8, q: 1.6}); // whip pan
 
 // 3. Nodes: a pop per node, signal blips, glow on the video node
 C.nodePops.forEach((f, i) => pop(f2s(f), [79, 83, 86, 88][i], 0.13, -0.5 + i * 0.25));
 pop(wordAt('cinematic'), 91, 0.15, 0.4);
 shimmer(wordAt('cinematic') + 0.05, 0.35, 0.05);
-for (let k = 0; k < 6; k++) tick(f2s(196 + k * 3), 0.05, 0.3);
-whoosh(f2s(229), 0.5, {gain: 0.45, from: 400, to: 6000, shape: 'swish', q: 1.6});
+for (let k = 0; k < 6; k++) tick(wordAt('cinematic') + f2s(6 + k * 3), 0.05, 0.3);
+whoosh(f2s(C.swipe + 1), 0.5, {gain: 0.45, from: 400, to: 6000, shape: 'swish', q: 1.6});
 
 // 4. Tools: cascade ticks, push-in, the click
 for (let k = 0; k < 7; k++) pop(f2s(C.toolsCascade + k * 2.5), 86 + (k % 3) * 2, 0.08, (k % 4) / 2 - 0.75);
@@ -426,7 +426,7 @@ for (let i = 0; i < N; i++) {
   const dd = 1 - 0.5 * voDuck[i];
   const sd = 1 - 0.4 * voDuck[i];
   for (const [o, ch] of [[L, 0], [R, 1]]) {
-    o[i] = drums[ch][i] * 0.75 * dd + music[ch][i] * md + sfx[ch][i] * 0.85 * sd + voice[ch][i] * 1.6 + wet[ch][i] * 0.07;
+    o[i] = drums[ch][i] * 0.75 * dd + music[ch][i] * md + sfx[ch][i] * 0.85 * sd + voice[ch][i] * 1.9 + wet[ch][i] * 0.07;
   }
 }
 const fade = Math.floor(0.22 * SR);
@@ -476,7 +476,7 @@ console.log(`wrote public/vosu/soundtrack.wav (${DUR.toFixed(2)}s)`);
     if (voDuck[i] < 0.9) continue;
     const md = (1 - 0.72 * voDuck[i]) * kickDuck[i];
     const b = drums[0][i] * 0.75 * (1 - 0.5 * voDuck[i]) + music[0][i] * md + sfx[0][i] * 0.85 * (1 - 0.4 * voDuck[i]);
-    v += (voice[0][i] * 1.6) ** 2;
+    v += (voice[0][i] * 1.9) ** 2;
     bed += b * b;
     n++;
   }
