@@ -293,6 +293,17 @@ function shaker(t, g) {
     write(perc, s + i, v * 0.8, v);
   }
 }
+/** Short mechanical click (a request being sent). */
+function click(t, g = 0.3) {
+  const s0 = Math.floor(t * SR);
+  const hp = new Biquad();
+  hp.set('hp', 2200, 0.7);
+  for (let i = 0; i < 0.04 * SR; i++) {
+    const x = i / SR;
+    const v = hp.run(noise()) * (Math.exp(-x * 900) + (x > 0.018 ? Math.exp(-(x - 0.018) * 900) * 0.5 : 0)) * g;
+    write(sfx, s0 + i, v * 0.6, v);
+  }
+}
 /** Two-tone data blip. */
 function blip(t, up = true, g = 0.06, pan = 0) {
   const [a, b] = up ? [88, 95] : [95, 88];
@@ -321,14 +332,25 @@ bell(C.dotArrive, 77, 0.08, {ratio: 1, index: 1.4, decay: 3, send: 0.9});
 bell(C.dotArrive + 0.08, 84, 0.05, {ratio: 2, index: 1, decay: 3.5, send: 0.9});
 sine(C.dotArrive, 0.5, 41, 0.12, 0.01);
 TAG_IN.forEach((t, i) => pop(t, 84 + i * 3, 0.07, [-0.5, 0.4, -0.1][i]));
-STEP_IN.forEach((t, i) => {
-  pop(t + 0.2, 79 + [0, 4, 7][i], 0.09, 0.3);
-  tick(t - 0.05, 0.03, 0.2, 4200);
-});
+// planning = deciding: soft draft ideas, a scan weighs them, two are rejected, three are kept
+const THINK = C.think;
+const REJECT = W('plan', 4) - 0.05;
+for (let i = 0; i < 5; i++) bell(THINK + 0.05 + i * 0.09, [86, 89, 84, 91, 88][i], 0.022, {ratio: 3, index: 0.5, decay: 9, pan: i % 2 ? 0.4 : -0.1, send: 0.9});
+whoosh(THINK + 0.3, REJECT - THINK - 0.2, {gain: 0.07, from: 900, to: 2600, shape: 'up', q: 3});
+for (const pan of [0.35, 0.55]) {
+  pop(REJECT + (pan > 0.4 ? 0.06 : 0), 67, 0.07, pan);
+  whoosh(REJECT + 0.45, 0.4, {gain: 0.06, from: 1800, to: 400, shape: 'down', pan});
+}
+STEP_IN.forEach((t, i) => pop(t + 0.15, 79 + [0, 4, 7][i], 0.09, 0.3));
+bell(STEP_IN[2] + 0.55, 91, 0.03, {ratio: 2, index: 0.8, decay: 6, send: 0.8}); // plan ready
+// tools = external actions: boundary, request typed, process runs, done
+whoosh(TOOLS_IN - 0.35, 0.5, {gain: 0.08, from: 400, to: 1600, pan: 0.5});
 for (let i = 0; i < 3; i++) tick(TOOLS_IN + 0.15 + i * 0.08, 0.04, 0.5, 3600);
 ACT.forEach((t, i) => {
-  blip(t + 0.25, true, 0.05, 0.5);
-  blip(t + 0.5, false, 0.04, 0.6);
+  click(t - 0.05, 0.25);
+  for (let k = 0; k < 6; k++) tick(t - 0.05 + k * 0.05, 0.025, 0.6, 2800 + rnd() * 1500);
+  for (let k = 0; k < 10; k++) tick(t + 0.25 + k * 0.03, 0.03, 0.6, 1800 + k * 160);
+  bell(t + 0.55, 93, 0.045, {ratio: 2, index: 0.7, decay: 12, pan: 0.6, send: 0.4});
   pop(t + 0.8, 86 + i * 2, 0.06, 0.1);
 });
 // results converge into one answer

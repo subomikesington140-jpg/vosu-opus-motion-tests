@@ -34,10 +34,8 @@ const AG = {x: 900, y: 0, r: 92};
 const ROWS = [-170, 0, 170];
 const STEP_X = 1460; // card left
 const STEP_W = 400;
-const TOOL_X = 2260; // node centre
-const CHIP_X = 2345;
 const RES = {x: 3250, y: 0, w: 540, h: 470};
-const STAGE_X = [0, 900, 1660, 2440, 3250];
+const STAGE_X = [0, 900, 1670, 2415, 3250];
 
 // tool activations land on the word that names them
 const ACT = [W('tools', 8), W('tools', 10), W('tools', 13)].map((t) => t - 0.3);
@@ -54,12 +52,12 @@ const CAM: Key[] = [
   [2.9, 60, 0, 1.3],
   [4.4, 900, 10, 1.32],
   [6.3, 1010, 10, 1.22],
-  [7.6, 1380, 0, 1.16],
-  [9.5, 1440, 0, 1.15],
-  [10.9, 2080, 0, 1.1],
-  [14.7, 2170, 0, 1.1],
-  [15.9, 2930, 0, 1.12],
-  [18.0, 2965, 0, 1.15],
+  [7.6, 1385, 0, 1.15],
+  [9.5, 1430, 0, 1.14],
+  [10.9, 2010, 0, 1.08],
+  [14.7, 2070, 0, 1.08],
+  [15.9, 2870, 0, 1.1],
+  [18.0, 2900, 0, 1.12],
   [19.3, 1565, -30, 0.47],
   [20, 1565, -30, 0.465],
 ];
@@ -131,8 +129,8 @@ const Packet: React.FC<{c: Curve; t: number; t0: number; t1: number; color: stri
 
 const L1 = curve([392, 0], [AG.x - AG.r - 6, 0]);
 const L_STEP = ROWS.map((y) => curve([AG.x + AG.r + 6, 0], [STEP_X, y]));
-const L_TOOL = ROWS.map((y) => curve([STEP_X + STEP_W, y], [TOOL_X - 58, y]));
-const L_RES = ROWS.map((y) => curve([CHIP_X + 300, y], [RES.x - RES.w / 2 - 4, y * 0.25]));
+const L_TOOL = ROWS.map((y) => curve([STEP_X + STEP_W, y], [2195, y]));
+const L_RES = ROWS.map((y) => curve([2195 + 440, y], [RES.x - RES.w / 2 - 4, y * 0.25]));
 
 // ---------------------------------------------------------------- composition
 export const AgentExplainer: React.FC = () => {
@@ -296,90 +294,188 @@ const Tags: React.FC<{t: number}> = ({t}) => (
   </>
 );
 
-// ---------------------------------------------------------------- 03 plan
-const STEPS = ['Find flights', 'Pick a hotel', 'Check the weather'];
-const Steps: React.FC<{t: number}> = ({t}) => (
-  <>
-    {STEPS.map((s, i) => {
-      const a = STEP_IN[i] + 0.2;
-      const pr = prog(t, a, 0.45, E.quintOut);
-      if (pr <= 0) return null;
-      const done = prog(t, ACT[i] + 0.8, 0.25, E.expoOut);
-      const active = t > ACT[i] - 0.1 && t < ACT[i] + 0.9;
-      return (
-        <div key={s} style={abs(STEP_X, ROWS[i] - 42, {width: STEP_W, height: 84, opacity: pr, transform: `translateX(${(1 - pr) * -30}px)`})}>
-          <div style={{position: 'absolute', inset: 0, background: CARD, borderRadius: 22, boxShadow: SHADOW, border: `1.5px solid ${active ? BLUE : 'rgba(22,23,27,0.06)'}`}} />
-          <div style={abs(20, 20, {width: 44, height: 44, borderRadius: 22, background: done > 0 ? GREEN : 'transparent', border: `2px solid ${done > 0 ? GREEN : BLUE}`, display: 'flex', alignItems: 'center', justifyContent: 'center'})}>
-            {done > 0 ? (
-              <Check size={26} color="#fff" stroke={3} style={{transform: `scale(${lerp(0.4, 1, done)})`}} />
-            ) : (
-              <span style={{fontFamily: SANS_B, fontSize: 20, color: BLUE}}>{i + 1}</span>
-            )}
-          </div>
-          <div style={abs(84, 0, {height: 84, display: 'flex', alignItems: 'center', fontFamily: SANS, fontSize: 28, color: INK, whiteSpace: 'nowrap'})}>{s}</div>
-        </div>
-      );
-    })}
-  </>
-);
-
-// ---------------------------------------------------------------- 04 tools
-const TOOLS: [React.FC<{size?: number; color?: string; stroke?: number}>, string, string][] = [
-  [Plane, 'FLIGHT SEARCH', '$312 return'],
-  [Bed, 'HOTEL COMPARE', '4.7★ · $90 / night'],
-  [Weather, 'WEATHER', '24°C · Sunny'],
+// ---------------------------------------------------------------- 03 plan: a decision stage
+// Draft ideas appear inside the agent's thinking zone, a scan weighs them, two are
+// rejected, and the chosen three snap into an ordered, numbered plan.
+const ZONE = {x: 1385, y: -290, w: 570, h: 580};
+const CANDS: {label: string; x: number; y: number; slot: number}[] = [
+  {label: 'Find flights', x: 1440, y: -205, slot: 0},
+  {label: 'Book a food tour', x: 1660, y: -86, slot: -1},
+  {label: 'Pick a hotel', x: 1425, y: -22, slot: 1},
+  {label: 'Rent a car', x: 1705, y: 86, slot: -1},
+  {label: 'Check the weather', x: 1450, y: 178, slot: 2},
 ];
-const Tools: React.FC<{t: number}> = ({t}) => (
-  <>
-    {TOOLS.map(([Icon, name, val], i) => {
-      const p = pop(t, TOOLS_IN + 0.15 + i * 0.08);
-      const on = prog(t, ACT[i] + 0.25, 0.3, E.expoOut);
-      const chip = prog(t, ACT[i] + 0.45, 0.4, E.quintOut);
-      const flash = Math.max(0, 1 - Math.abs(t - (ACT[i] + 0.3)) / 0.35);
-      return (
-        <React.Fragment key={name}>
-          <div style={abs(TOOL_X - 56, ROWS[i] - 56, {width: 112, height: 112, ...p})}>
+const THINK = C.think;
+const REJECT = W('plan', 4) - 0.05; // on "plan:"
+const PLAN_READY = STEP_IN[2] + 0.55;
+const RED = '#D95141';
+
+const Steps: React.FC<{t: number}> = ({t}) => {
+  if (t < THINK - 0.2) return null;
+  const zone = prog(t, THINK - 0.15, 0.5, E.quintOut);
+  const scanY = lerp(ZONE.y + 20, ZONE.y + ZONE.h - 20, prog(t, THINK + 0.35, REJECT - THINK - 0.25, E.quartInOut));
+  const scanA = prog(t, THINK + 0.3, 0.2) * (1 - prog(t, REJECT + 0.05, 0.25));
+  const ready = prog(t, PLAN_READY, 0.3);
+  return (
+    <>
+      {/* the agent's thinking zone */}
+      <div style={abs(ZONE.x, ZONE.y, {width: ZONE.w, height: ZONE.h, borderRadius: 36, background: 'rgba(47,91,255,0.05)', border: '2px dashed rgba(47,91,255,0.32)', opacity: zone, transform: `scale(${lerp(0.96, 1, zone)})`})}>
+        <div style={abs(26, 18, {display: 'flex', alignItems: 'center', gap: 10, fontFamily: MONO, fontSize: 15, letterSpacing: '0.18em', color: BLUE, whiteSpace: 'nowrap'})}>
+          <Spark size={18} color={BLUE} fill={ready > 0.5 ? BLUE : 'none'} stroke={1.6} style={{transform: `rotate(${ready > 0.5 ? 0 : t * 120}deg)`}} />
+          {ready > 0.5 ? 'PLAN READY' : `WEIGHING OPTIONS${'.'.repeat(1 + (Math.floor(t * 4) % 3))}`}
+        </div>
+      </div>
+      {scanA > 0 && (
+        <div style={abs(ZONE.x + 14, scanY - 30, {width: ZONE.w - 28, height: 60, opacity: scanA, background: 'linear-gradient(180deg, rgba(47,91,255,0) 0%, rgba(47,91,255,0.12) 50%, rgba(47,91,255,0) 100%)', borderBottom: `2px solid rgba(47,91,255,0.55)`})} />
+      )}
+      {CANDS.map((c, i) => {
+        const p = pop(t, THINK + 0.05 + i * 0.09);
+        if (c.slot < 0) {
+          // rejected: struck through, then drops away
+          const strike = prog(t, REJECT, 0.25, E.quartInOut);
+          const gone = prog(t, REJECT + 0.45, 0.45, E.quartInOut);
+          if (gone >= 1) return null;
+          return (
+            <div key={c.label} style={abs(c.x, c.y - 30 + gone * 40, {opacity: p.opacity * (1 - gone), transform: `${p.transform} scale(${1 - gone * 0.1})`})}>
+              <Draft label={c.label} mark={strike > 0 ? '✕' : '?'} markColor={strike > 0 ? RED : BLUE} dim={strike} />
+              <div style={abs(54, 30, {width: (c.label.length * 13.4 + 4) * strike, height: 2.5, background: RED, borderRadius: 2})} />
+            </div>
+          );
+        }
+        // chosen: the draft becomes a numbered plan step in its slot
+        const a = STEP_IN[c.slot] + 0.05;
+        const m = Math.min(1.04, springAt(t * 30, a * 30, 0.3, 0.75));
+        const mc = clamp01(m);
+        const done = prog(t, ACT[c.slot] + 0.8, 0.25, E.expoOut);
+        const active = t > ACT[c.slot] - 0.1 && t < ACT[c.slot] + 0.9;
+        const x = lerp(c.x, STEP_X, m);
+        const y = lerp(c.y - 30, ROWS[c.slot] - 42, m);
+        const w = lerp(c.label.length * 13.4 + 84, STEP_W, mc);
+        const h = lerp(60, 84, mc);
+        const solid = mc > 0.5;
+        return (
+          <div key={c.label} style={abs(x, y, {width: w, height: h, ...p})}>
             <div
               style={{
                 position: 'absolute',
                 inset: 0,
-                borderRadius: 30,
-                background: CARD,
-                boxShadow: on > 0 ? `0 18px 40px rgba(240,149,43,${0.12 + 0.2 * flash}), 0 0 0 ${8 * flash}px rgba(240,149,43,0.15)` : SHADOW,
-                border: `2px solid ${on > 0 ? AMBER : 'rgba(22,23,27,0.08)'}`,
+                borderRadius: lerp(30, 22, mc),
+                background: `rgba(255,255,255,${lerp(0.55, 1, mc)})`,
+                boxShadow: solid ? SHADOW : 'none',
+                border: solid ? `1.5px solid ${active ? BLUE : 'rgba(22,23,27,0.06)'}` : '1.5px dashed rgba(47,91,255,0.5)',
+              }}
+            />
+            <div
+              style={abs(lerp(12, 20, mc), (h - lerp(36, 44, mc)) / 2, {
+                width: lerp(36, 44, mc),
+                height: lerp(36, 44, mc),
+                borderRadius: 22,
+                background: done > 0 ? GREEN : 'transparent',
+                border: `2px ${solid ? 'solid' : 'dashed'} ${done > 0 ? GREEN : BLUE}`,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-              }}
+              })}
             >
-              <Icon size={54} color={on > 0 ? AMBER : GREY} stroke={1.9} />
+              {done > 0 ? (
+                <Check size={26} color="#fff" stroke={3} style={{transform: `scale(${lerp(0.4, 1, done)})`}} />
+              ) : (
+                <span style={{fontFamily: SANS_B, fontSize: lerp(18, 20, mc), color: BLUE}}>{solid ? c.slot + 1 : '?'}</span>
+              )}
             </div>
+            <div style={abs(lerp(60, 84, mc), 0, {height: h, display: 'flex', alignItems: 'center', fontFamily: SANS, fontSize: lerp(24, 28, mc), color: solid ? INK : '#3F4A78', whiteSpace: 'nowrap'})}>{c.label}</div>
           </div>
-          <div style={abs(CHIP_X, ROWS[i] - 46, {opacity: p.opacity})}>
-            <div style={{fontFamily: MONO, fontSize: 18, letterSpacing: '0.14em', color: on > 0 ? '#C26F0E' : SUB, whiteSpace: 'nowrap'}}>{name}</div>
-            <div
-              style={{
-                marginTop: 10,
-                display: 'inline-block',
-                padding: '10px 18px',
-                borderRadius: 16,
-                background: 'rgba(240,149,43,0.12)',
-                fontFamily: SANS_B,
-                fontSize: 25,
-                color: INK,
-                whiteSpace: 'nowrap',
-                opacity: chip,
-                transform: `translateX(${(1 - chip) * -24}px)`,
-              }}
-            >
-              {val}
-            </div>
-          </div>
-        </React.Fragment>
-      );
-    })}
-  </>
+        );
+      })}
+    </>
+  );
+};
+const Draft: React.FC<{label: string; mark: string; markColor: string; dim: number}> = ({label, mark, markColor, dim}) => (
+  <div style={{position: 'relative', height: 60, display: 'inline-flex', alignItems: 'center', padding: '0 24px 0 12px', borderRadius: 30, background: 'rgba(255,255,255,0.55)', border: `1.5px dashed ${dim > 0 ? 'rgba(217,81,65,0.45)' : 'rgba(47,91,255,0.5)'}`, whiteSpace: 'nowrap'}}>
+    <div style={{width: 36, height: 36, borderRadius: 18, border: `2px dashed ${markColor}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: SANS_B, fontSize: 18, color: markColor}}>{mark}</div>
+    <span style={{fontFamily: SANS, fontSize: 24, color: dim > 0 ? GREY : '#3F4A78', marginLeft: 12}}>{label}</span>
+  </div>
 );
+
+// ---------------------------------------------------------------- 04 tools: external actions
+// Outside the agent: each tool is a running process that receives a call, executes
+// and returns data across the boundary.
+const BOUND_X = 2045;
+const ACTION = {x: 2195, w: 440, h: 138};
+const TOOLS: [React.FC<{size?: number; color?: string; stroke?: number}>, string, string, string][] = [
+  [Plane, 'FLIGHTS API', 'search_flights("LIS", Sat–Sun)', '$312 return'],
+  [Bed, 'HOTELS API', 'compare_hotels("Lisbon", max $120)', '4.7★ · $90 / night'],
+  [Weather, 'WEATHER API', 'get_forecast("Lisbon")', '24°C · Sunny'],
+];
+const PANEL = '#17191F';
+const Tools: React.FC<{t: number}> = ({t}) => {
+  const b = prog(t, TOOLS_IN - 0.35, 0.5, E.quartInOut);
+  return (
+    <>
+      {/* the boundary between the agent and the outside world */}
+      <div style={abs(BOUND_X + 40, -300, {width: 660, height: 600, borderRadius: 36, background: 'rgba(240,149,43,0.06)', opacity: b})} />
+      <div style={abs(BOUND_X, -310, {width: 0, height: 620 * b, borderLeft: '2px dashed rgba(22,23,27,0.28)'})} />
+      <div style={abs(BOUND_X - 22, -330, {transform: 'translate(-100%, -50%)', opacity: b, fontFamily: MONO, fontSize: 15, letterSpacing: '0.18em', color: BLUE, whiteSpace: 'nowrap'})}>INSIDE THE AGENT ←</div>
+      <div style={abs(BOUND_X + 22, -330, {transform: 'translateY(-50%)', opacity: b, fontFamily: MONO, fontSize: 15, letterSpacing: '0.18em', color: '#C26F0E', whiteSpace: 'nowrap'})}>→ OUTSIDE WORLD</div>
+      {TOOLS.map(([Icon, name, call, val], i) => {
+        const p = pop(t, TOOLS_IN + 0.15 + i * 0.08);
+        const a = ACT[i];
+        const typed = Math.floor(clamp01((t - (a - 0.05)) / 0.3) * call.length);
+        const run = clamp01((t - (a + 0.25)) / 0.3);
+        const done = t >= a + 0.55;
+        const running = t >= a + 0.25 && !done;
+        const res = prog(t, a + 0.55, 0.35, E.quintOut);
+        const glow = running ? 1 : Math.max(0, 1 - (t - (a + 0.55)) / 0.5) * (done ? 1 : 0);
+        return (
+          <div key={name} style={abs(ACTION.x, ROWS[i] - ACTION.h / 2, {width: ACTION.w, height: ACTION.h, ...p})}>
+            <div style={{position: 'absolute', inset: 0, borderRadius: 22, background: PANEL, boxShadow: `0 20px 44px rgba(20,22,30,0.22), 0 0 0 ${6 * glow}px rgba(240,149,43,0.25)`}} />
+            {/* header: service + status */}
+            <div style={abs(20, 18, {width: ACTION.w - 40, display: 'flex', alignItems: 'center'})}>
+              <div style={{width: 40, height: 40, borderRadius: 12, background: typed > 0 ? 'rgba(240,149,43,0.18)' : 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                <Icon size={26} color={typed > 0 ? AMBER : '#6E717C'} stroke={1.9} />
+              </div>
+              <span style={{fontFamily: MONO, fontSize: 16, letterSpacing: '0.14em', color: '#E9E7E1', marginLeft: 14, flex: 1, whiteSpace: 'nowrap'}}>{name}</span>
+              <Status state={done ? 'done' : running ? 'run' : typed > 0 ? 'call' : 'idle'} t={t} />
+            </div>
+            {/* the call being executed */}
+            <div style={abs(20, 70, {fontFamily: MONO, fontSize: 16, color: '#8E95A6', whiteSpace: 'nowrap'})}>
+              <span style={{color: AMBER}}>›</span> {typed > 0 ? call.slice(0, typed) : <span style={{opacity: 0.4}}>waiting for request</span>}
+              {typed > 0 && typed < call.length && <span style={{display: 'inline-block', width: 9, height: 17, background: AMBER, marginLeft: 2, verticalAlign: -2}} />}
+            </div>
+            {/* progress, then the returned data */}
+            <div style={abs(20, 104, {width: ACTION.w - 40, height: 6, borderRadius: 3, background: 'rgba(255,255,255,0.08)', opacity: done ? 1 - res : 1})}>
+              <div style={{width: `${run * 100}%`, height: 6, borderRadius: 3, background: AMBER}} />
+            </div>
+            {res > 0 && (
+              <div style={abs(20, 92, {opacity: res, transform: `translateY(${(1 - res) * 8}px)`, fontFamily: SANS_B, fontSize: 24, color: '#FFC27A', whiteSpace: 'nowrap'})}>
+                ← {val}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </>
+  );
+};
+const Status: React.FC<{state: 'idle' | 'call' | 'run' | 'done'; t: number}> = ({state, t}) => {
+  const st = {
+    idle: ['QUEUED', '#6E717C', 'rgba(255,255,255,0.06)'],
+    call: ['REQUEST', '#9DB2FF', 'rgba(47,91,255,0.2)'],
+    run: ['RUNNING', AMBER, 'rgba(240,149,43,0.16)'],
+    done: ['DONE', '#5FD39A', 'rgba(30,158,99,0.2)'],
+  }[state];
+  return (
+    <div style={{display: 'flex', alignItems: 'center', gap: 8, padding: '6px 12px', borderRadius: 14, background: st[2], fontFamily: MONO, fontSize: 13, letterSpacing: '0.14em', color: st[1], whiteSpace: 'nowrap'}}>
+      {state === 'run' && (
+        <svg width={14} height={14} viewBox="0 0 14 14" style={{transform: `rotate(${t * 720}deg)`}}>
+          <circle cx={7} cy={7} r={5.5} fill="none" stroke={AMBER} strokeWidth={2} strokeDasharray="20 40" strokeLinecap="round" />
+        </svg>
+      )}
+      {state === 'done' && <Check size={14} color="#5FD39A" stroke={3} />}
+      {st[0]}
+    </div>
+  );
+};
 
 // ---------------------------------------------------------------- 05 result
 const ROWS_RES: [React.FC<{size?: number; color?: string}>, string, string][] = [
