@@ -6,3 +6,4 @@ public/vosu/soundtrack.wav
 voices/
 .DS_Store
 public/vosu/sync/soundtrack.wav
+__pycache__/
