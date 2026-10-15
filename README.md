@@ -101,3 +101,26 @@ npm run vosu:render      # mix audio + render out/vosu-promo.mp4 (uses committed
 npm run vosu:assets      # re-cut UI components from assets/vosu-source/
 KOKORO_DIR=/path/with/kokoro-v1.0.onnx+voices-v1.0.bin npm run vosu:vo   # re-record the voiceover
 ```
+
+## Synced to a supplied voiceover
+
+**Rendered output:** [`out/vosu-promo-synced.mp4`](out/vosu-promo-synced.mp4) (17.2s)
+
+The first cut of the film (`157d7bd`), unchanged in design, animation and music, re-paced
+to an ElevenLabs v3 voiceover (`assets/vosu-source/voice-elevenlabs.mp3`):
+
+1. `scripts/vosu/align_vo.py` finds exact word timings in the recording. It splits the
+   take at its breaths and force-aligns each chunk against a Kokoro read of the same words
+   (MFCC dynamic time warping). Words that follow a breath are pinned to the breath's end.
+2. `scripts/vosu/build_sync.py` pairs each cue word of the cut (brand, pills, "cinematic",
+   "click", "Creator", end-card words, line starts) with the same word in the take. A smooth
+   monotone curve through those pairs becomes the time map.
+3. `scripts/vosu/sync/render_synced.sh` checks the cut out into a temporary worktree and
+   adds only the sync layer. `VosuSynced` shows the cut's own frame at each mapped moment,
+   the sound design follows the same map (`generate-audio.mjs --sync`), the music keeps its
+   tempo while its sections follow the voice, and the voice/music balance matches the cut's.
+
+```bash
+python3 scripts/vosu/align_vo.py --audio assets/vosu-source/voice-elevenlabs.mp3 --model-dir voices/kokoro
+scripts/vosu/sync/render_synced.sh 157d7bd out/vosu-promo-synced.mp4
+```

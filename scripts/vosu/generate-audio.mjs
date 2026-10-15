@@ -2,6 +2,11 @@
 // Every hit is placed from src/vosu/timeline.json and the VO word timings in
 // src/vosu/vo.json, the same cue sheet the picture reads.
 // Output: public/vosu/soundtrack.wav (44.1 kHz, 16-bit stereo)
+//
+// --sync: the film re-paced to a supplied voiceover (scripts/vosu/build_sync.py).
+// Every sound-design cue goes through the same time map as the picture, the music
+// keeps its tempo but its sections follow the voice, and the supplied recording is
+// the voice. Output: public/vosu/sync/soundtrack.wav
 
 import fs from 'node:fs';
 import path from 'node:path';
@@ -13,15 +18,27 @@ const T = JSON.parse(fs.readFileSync(path.join(root, 'src/vosu/timeline.json'), 
 const VO = JSON.parse(fs.readFileSync(path.join(root, 'src/vosu/vo.json'), 'utf8'));
 const C = T.cues;
 
+const SYNC = process.argv.includes('--sync');
+const WARP = SYNC ? JSON.parse(fs.readFileSync(path.join(root, 'src/vosu/sync/warp.json'), 'utf8')) : null;
+// original film time -> output time (identity unless syncing)
+const W = (t) => {
+  if (!WARP) return t;
+  const x = t / WARP.oldStep;
+  const a = WARP.oldToNew;
+  if (x >= a.length - 1) return a[a.length - 1] + (t - (a.length - 1) * WARP.oldStep);
+  const i = Math.max(0, Math.floor(x));
+  return a[i] + (a[i + 1] - a[i]) * (x - i);
+};
+
 const SR = 44100;
-const DUR = T.durationInFrames / T.fps;
+const DUR = (SYNC ? WARP.durationInFrames : T.durationInFrames) / T.fps;
 const N = Math.ceil(SR * DUR);
 const BEAT = 60 / T.bpm;
 const b2s = (b) => b * BEAT;
-const f2s = (f) => f / T.fps;
+const f2s = (f) => W(f / T.fps);
 const wordAt = (k) => {
   const [line, i] = T.words[k];
-  return T.vo[line] + VO[line].words[i].start;
+  return W(T.vo[line] + VO[line].words[i].start);
 };
 
 // ---------------------------------------------------------------- buses
@@ -238,7 +255,12 @@ function boom(t, g = 0.6, midi = 29) {
 }
 
 // ---------------------------------------------------------------- music (F major, 120 BPM)
-// bars of 2s: Dm | Bb | F | C | Dm | Bb | C | F
+// bars of 2s: Dm | Bb | F | C | Dm | Bb | C | F   (synced: Dm | Bb | F | C | Dm | Bb | F | C | F)
+// The final chord lands on a bar downbeat nearest the end card's chord cue, so the
+// tempo stays steady while the structure follows the voice.
+const FINAL = SYNC ? Math.round(f2s(C.finalChord) / b2s(4)) * b2s(4) : f2s(C.finalChord);
+// the groove runs until the end card arrives, then a short build into the final chord
+const GROOVE_END = SYNC ? Math.round(f2s(C.endBloom) / BEAT) : 26;
 const CHORDS = [
   {root: 38, notes: [62, 65, 69, 72]}, // Dm7
   {root: 34, notes: [62, 65, 69, 70]}, // Bbmaj7
@@ -249,14 +271,16 @@ const CHORDS = [
   {root: 36, notes: [60, 64, 67, 72]},
   {root: 41, notes: [60, 65, 69, 76]}, // Fadd9 resolve
 ];
-CHORDS.forEach((ch, bar) => {
+const BARS = SYNC ? [0, 1, 2, 3, 4, 5, 2, 6, 7] : [0, 1, 2, 3, 4, 5, 6, 7];
+BARS.forEach((ci, bar) => {
+  const ch = CHORDS[ci];
   const t0 = b2s(bar * 4);
   const intro = bar === 0;
   // warm pad
   ch.notes.forEach((m, j) =>
     saw(t0, b2s(4) - 0.05, m - 12, {gain: intro ? 0.035 : 0.045, cutoff: intro ? 500 : 1100, env: 0, attack: intro ? 1.2 : 0.25, voices: 3, detune: 0.18, pan: (j - 1.5) * 0.35, send: 0.5, release: 0.4}),
   );
-  if (bar === 7) return; // the last bar is the held end chord (below)
+  if (bar === BARS.length - 1) return; // the last bar is the held end chord (below)
   // pluck arpeggio in 16ths (sparser in the intro)
   const pattern = [0, 1, 2, 3, 2, 1, 2, 3];
   for (let k = 0; k < 16; k++) {
@@ -269,16 +293,20 @@ CHORDS.forEach((ch, bar) => {
   }
 });
 // final held chord on the end card
-CHORDS[7].notes.forEach((m, j) => saw(f2s(C.finalChord), 1.0, m, {gain: 0.05, cutoff: 900, env: 2500, decay: 3, voices: 3, detune: 0.15, pan: (j - 1.5) * 0.4, send: 0.7, release: 0.6}));
-sub(f2s(C.finalChord), 0.9, 29, 0.28);
+CHORDS[7].notes.forEach((m, j) => saw(FINAL, 1.0, m, {gain: 0.05, cutoff: 900, env: 2500, decay: 3, voices: 3, detune: 0.15, pan: (j - 1.5) * 0.4, send: 0.7, release: 0.6}));
+sub(FINAL, 0.9, 29, 0.28);
 
 // drums: soft heartbeat intro, groove from bar 1, a breath before the end card
 for (let b = 0; b < 4; b++) kick(b2s(b), 0.3 + b * 0.08);
-for (let b = 4; b < 26; b++) kick(b2s(b), 0.85);
-for (let b = 5; b < 26; b += 2) clap(b2s(b), 0.55);
-for (let k = 8; k < 52; k++) hat(b2s(k * 0.5 + 0.25), k % 2 ? 0.5 : 0.35, k % 2 ? 0.3 : -0.2);
-for (let k = 0; k < 8; k++) hat(b2s(26 + k * 0.25), 0.25 + k * 0.05, 0.2); // build into the end card
-kick(f2s(C.finalChord), 0.9);
+for (let b = 4; b < GROOVE_END; b++) kick(b2s(b), 0.85);
+for (let b = 5; b < GROOVE_END; b += 2) clap(b2s(b), 0.55);
+for (let k = 8; k < GROOVE_END * 2; k++) hat(b2s(k * 0.5 + 0.25), k % 2 ? 0.5 : 0.35, k % 2 ? 0.3 : -0.2);
+{
+  // build into the end card: 16th hats rising to the final chord
+  const n = Math.max(0, Math.round((FINAL - b2s(GROOVE_END)) / b2s(0.25)));
+  for (let k = 0; k < n; k++) hat(b2s(GROOVE_END + k * 0.25), 0.25 + (0.4 * k) / Math.max(1, n), 0.2);
+}
+kick(FINAL, 0.9);
 
 // ---------------------------------------------------------------- sound design
 // 1. Logo: rising swell, a tonal pop per letter, glint, fly-through the star
@@ -350,11 +378,12 @@ function readWav(file) {
   return out;
 }
 const voEnv = new Float32Array(N);
-for (const [key, start] of Object.entries(T.vo)) {
-  const pcm = readWav(path.join(root, `public/vosu/vo/${key}.wav`));
+const takes = SYNC ? {voice: WARP.voiceOffset} : T.vo;
+for (const [key, start] of Object.entries(takes)) {
+  const pcm = readWav(path.join(root, SYNC ? 'public/vosu/sync/voice.wav' : `public/vosu/vo/${key}.wav`));
   const s = Math.floor(start * SR);
   for (let i = 0; i < pcm.length; i++) {
-    write(voice, s + i, pcm[i] * 0.95);
+    write(voice, s + i, pcm[i] * (SYNC ? 0.94 : 0.95)); // synced take: matched to the first cut's voice/music balance (+9.6 dB)
     write(verb, s + i, pcm[i] * 0.05); // a touch of room
     if (s + i < N) voEnv[s + i] = Math.max(voEnv[s + i], Math.abs(pcm[i]));
   }
@@ -459,13 +488,13 @@ for (let i = 0; i < N; i++) {
   buf.writeInt16LE(Math.round(clamp(L[i] * norm, -1, 1) * 32767), 44 + i * 4);
   buf.writeInt16LE(Math.round(clamp(R[i] * norm, -1, 1) * 32767), 46 + i * 4);
 }
-const outPath = path.join(root, 'public/vosu/soundtrack.wav');
+const outPath = path.join(root, SYNC ? 'public/vosu/sync/soundtrack.wav' : 'public/vosu/soundtrack.wav');
 const prePath = outPath.replace('.wav', '.pre.wav');
 fs.writeFileSync(prePath, buf);
 // master to the -14 LUFS web/social standard with a -1.5 dBTP ceiling
 execFileSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', '-i', prePath, '-af', 'loudnorm=I=-14:TP=-1.5:LRA=9,aresample=44100', '-c:a', 'pcm_s16le', outPath]);
 fs.unlinkSync(prePath);
-console.log(`wrote public/vosu/soundtrack.wav (${DUR.toFixed(2)}s)`);
+console.log(`wrote ${path.relative(root, outPath)} (${DUR.toFixed(2)}s)`);
 
 // report: voice vs. bed level while the VO is speaking (target: voice >= +8 dB over bed)
 {

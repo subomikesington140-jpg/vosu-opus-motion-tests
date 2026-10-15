@@ -1,0 +1,274 @@
+{
+ "source": "voice-elevenlabs.mp3",
+ "duration": 16.274,
+ "phrases": [
+  [
+   0.087,
+   1.068
+  ],
+  [
+   1.283,
+   5.161
+  ],
+  [
+   5.834,
+   8.417
+  ],
+  [
+   8.87,
+   10.466
+  ],
+  [
+   10.931,
+   13.05
+  ],
+  [
+   13.996,
+   14.669
+  ],
+  [
+   15.018,
+   16.274
+  ]
+ ],
+ "words": [
+  {
+   "line": "intro",
+   "i": 0,
+   "ph": "mˈiːt",
+   "start": 0.087,
+   "end": 0.417
+  },
+  {
+   "line": "intro",
+   "i": 1,
+   "ph": "vˈoʊsuː",
+   "start": 0.487,
+   "end": 1.068
+  },
+  {
+   "line": "studio",
+   "i": 0,
+   "ph": "jʊɹ",
+   "start": 1.283,
+   "end": 1.462
+  },
+  {
+   "line": "studio",
+   "i": 1,
+   "ph": "ˌeɪˈaɪ",
+   "start": 1.462,
+   "end": 1.903
+  },
+  {
+   "line": "studio",
+   "i": 2,
+   "ph": "stˈuːdɪˌoʊ",
+   "start": 1.938,
+   "end": 2.344
+  },
+  {
+   "line": "studio",
+   "i": 3,
+   "ph": "fɔːɹ",
+   "start": 2.391,
+   "end": 2.518
+  },
+  {
+   "line": "studio",
+   "i": 4,
+   "ph": "vˈɪdɪoʊz",
+   "start": 2.565,
+   "end": 3.1
+  },
+  {
+   "line": "studio",
+   "i": 5,
+   "ph": "ˈɪmɪdʒᵻz",
+   "start": 3.19,
+   "end": 3.756
+  },
+  {
+   "line": "studio",
+   "i": 6,
+   "ph": "ˈɔːdɪˌoʊ",
+   "start": 3.884,
+   "end": 4.539
+  },
+  {
+   "line": "studio",
+   "i": 7,
+   "ph": "ænd",
+   "start": 4.585,
+   "end": 4.608
+  },
+  {
+   "line": "studio",
+   "i": 8,
+   "ph": "θɹˈiː",
+   "start": 4.643,
+   "end": 4.875
+  },
+  {
+   "line": "studio",
+   "i": 9,
+   "ph": "dˈiː",
+   "start": 4.933,
+   "end": 5.161
+  },
+  {
+   "line": "nodes",
+   "i": 0,
+   "ph": "tˈɜːn",
+   "start": 5.834,
+   "end": 6.268
+  },
+  {
+   "line": "nodes",
+   "i": 1,
+   "ph": "aɪdˈiəz",
+   "start": 6.338,
+   "end": 6.977
+  },
+  {
+   "line": "nodes",
+   "i": 2,
+   "ph": "ˌɪntʊ",
+   "start": 7.0,
+   "end": 7.162
+  },
+  {
+   "line": "nodes",
+   "i": 3,
+   "ph": "sˌɪnɪmˈæɾɪk",
+   "start": 7.267,
+   "end": 7.65
+  },
+  {
+   "line": "nodes",
+   "i": 4,
+   "ph": "sˈiːkwənsᵻz",
+   "start": 7.696,
+   "end": 8.417
+  },
+  {
+   "line": "tools",
+   "i": 0,
+   "ph": "pɹˈoʊ",
+   "start": 8.87,
+   "end": 9.119
+  },
+  {
+   "line": "tools",
+   "i": 1,
+   "ph": "tˈuːlz",
+   "start": 9.2,
+   "end": 9.699
+  },
+  {
+   "line": "tools",
+   "i": 2,
+   "ph": "wˈʌn",
+   "start": 9.746,
+   "end": 9.85
+  },
+  {
+   "line": "tools",
+   "i": 3,
+   "ph": "klˈɪk",
+   "start": 9.885,
+   "end": 10.047
+  },
+  {
+   "line": "tools",
+   "i": 4,
+   "ph": "ɐwˈeɪ",
+   "start": 10.059,
+   "end": 10.466
+  },
+  {
+   "line": "market",
+   "i": 0,
+   "ph": "ænd",
+   "start": 10.931,
+   "end": 11.017
+  },
+  {
+   "line": "market",
+   "i": 1,
+   "ph": "ɡɛt",
+   "start": 11.063,
+   "end": 11.237
+  },
+  {
+   "line": "market",
+   "i": 2,
+   "ph": "pˈeɪd",
+   "start": 11.319,
+   "end": 11.69
+  },
+  {
+   "line": "market",
+   "i": 3,
+   "ph": "ɔnðə",
+   "start": 11.76,
+   "end": 11.911
+  },
+  {
+   "line": "market",
+   "i": 4,
+   "ph": "kɹiːˈeɪɾɚ",
+   "start": 11.969,
+   "end": 12.248
+  },
+  {
+   "line": "market",
+   "i": 5,
+   "ph": "mˈɑːɹkɪtplˌeɪs",
+   "start": 12.294,
+   "end": 13.05
+  },
+  {
+   "line": "outro",
+   "i": 0,
+   "ph": "vˈoʊsuː",
+   "start": 13.996,
+   "end": 14.663
+  },
+  {
+   "line": "outro",
+   "i": 1,
+   "ph": "wˌʌt",
+   "start": 15.029,
+   "end": 15.173
+  },
+  {
+   "line": "outro",
+   "i": 2,
+   "ph": "ɑːɹ",
+   "start": 15.196,
+   "end": 15.289
+  },
+  {
+   "line": "outro",
+   "i": 3,
+   "ph": "juː",
+   "start": 15.336,
+   "end": 15.405
+  },
+  {
+   "line": "outro",
+   "i": 4,
+   "ph": "kɹiːˈeɪɾɪŋ",
+   "start": 15.452,
+   "end": 15.835
+  },
+  {
+   "line": "outro",
+   "i": 5,
+   "ph": "tədˈeɪ",
+   "start": 15.893,
+   "end": 16.265
+  }
+ ]
+}

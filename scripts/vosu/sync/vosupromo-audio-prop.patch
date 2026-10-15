@@ -1,0 +1,21 @@
+diff --git a/src/vosu/VosuPromo.tsx b/src/vosu/VosuPromo.tsx
+index add3d2e..5e764eb 100644
+--- a/src/vosu/VosuPromo.tsx
++++ b/src/vosu/VosuPromo.tsx
+@@ -20,7 +20,7 @@ const seq = (k: keyof typeof S) => ({from: S[k].from, durationInFrames: S[k].to
+  * sets stacking (the logo sits over the studio for the fly-through, the market
+  * over the end card for the dive into white).
+  */
+-export const VosuPromo: React.FC = () => (
++export const VosuPromo: React.FC<{withAudio?: boolean}> = ({withAudio = true}) => (
+   <AbsoluteFill style={{background: BRAND.bg}}>
+     <Sequence {...seq('studio')} name="02 Studio"><Studio /></Sequence>
+     <Sequence {...seq('logo')} name="01 Logo"><LogoOpen /></Sequence>
+@@ -29,6 +29,6 @@ export const VosuPromo: React.FC = () => (
+     <Sequence {...seq('end')} name="06 End card"><EndCard /></Sequence>
+     <Sequence {...seq('market')} name="05 Marketplace"><Market /></Sequence>
+     <Grain opacity={0.05} vignette={0.3} />
+-    <Audio src={staticFile('vosu/soundtrack.wav')} />
++    {withAudio && <Audio src={staticFile('vosu/soundtrack.wav')} />}
+   </AbsoluteFill>
+ );
